@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harvey Prompt Library Management Studio</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --surface-soft: #f8f8f8;
+      --surface-raised: #ffffff;
+      --text: #111111;
+      --muted: #5f5f5f;
+      --faint: #8a8a8a;
+      --line: #d9d9d9;
+      --line-strong: #222222;
+      --button: #111111;
+      --button-text: #ffffff;
+      --button-soft: #eeeeee;
+      --button-soft-text: #111111;
+      --focus: #000000;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.10);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --container: 1000px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #050505;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --surface-raised: #1d1d1d;
+      --text: #f4f4f4;
+      --muted: #bdbdbd;
+      --faint: #8e8e8e;
+      --line: #3a3a3a;
+      --line-strong: #f0f0f0;
+      --button: #f4f4f4;
+      --button-text: #0a0a0a;
+      --button-soft: #242424;
+      --button-soft-text: #f4f4f4;
+      --focus: #ffffff;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.50);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      background:
+        linear-gradient(135deg, rgba(0, 0, 0, 0.045) 0, transparent 28%),
+        var(--bg);
+      color: var(--text);
+      padding: 28px;
+    }
+
+    [data-theme="dark"] body {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0, transparent 28%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(100%, var(--container));
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: start;
+      padding: 28px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-raised);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .brand-icon,
+    .signpost,
+    .mini-icon {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .brand-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 13px;
+    }
+
+    .brand-icon svg,
+    .signpost svg,
+    .mini-icon svg,
+    .btn svg {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-icon svg,
+    .signpost svg { width: 28px; height: 28px; }
+    .mini-icon svg,
+    .btn svg { width: 18px; height: 18px; }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      font-weight: 760;
+    }
+
+    .header-copy p {
+      margin: 9px 0 0;
+      max-width: 72ch;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 10px 15px;
+      cursor: pointer;
+      background: var(--button);
+      color: var(--button-text);
+      font-weight: 720;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn.secondary {
+      background: var(--button-soft);
+      color: var(--button-soft-text);
+      border-color: var(--line);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .tab {
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 15px 10px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+    }
+
+    .tab:last-child { border-right: 0; }
+
+    .tab[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: inset 0 -3px 0 var(--line-strong);
+    }
+
+    .tab-number {
+      display: inline-grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tab-label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage {
+      padding: 28px;
+      background: var(--surface);
+    }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    .stage-head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .signpost {
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+
+    .stage-head h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+    }
+
+    .stage-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 78ch;
+    }
+
+    .illustration-container {
+      width: 100%;
+      min-height: 235px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      margin: 0 0 22px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .illustration-container svg {
+      width: 100%;
+      max-width: 620px;
+      height: auto;
+      display: block;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .data-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .data-block {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      padding: 17px;
+    }
+
+    .data-block h3,
+    .data-block h4 {
+      margin: 0 0 8px;
+      font-size: 0.79rem;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-weight: 850;
+    }
+
+    .data-block p,
+    .data-block li {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .data-block p { margin: 0; }
+    .data-block ul,
+    .data-block ol { margin: 0; padding-left: 1.2rem; }
+
+    .notice {
+      margin: 22px 0;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 17px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      background: var(--surface-raised);
+    }
+
+    .mini-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      color: var(--text);
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.78rem;
+    }
+
+    .notice p { margin: 0; color: var(--muted); }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--text);
+      font-size: 0.79rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-weight: 850;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px 13px;
+      background: var(--surface-raised);
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 500;
+    }
+
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+      line-height: 1.52;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .wide { grid-column: 1 / -1; }
+
+    .task-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .task-card {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+      padding: 17px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .task-card:hover,
+    .task-card[aria-pressed="true"] {
+      border-color: var(--line-strong);
+      background: var(--surface-raised);
+    }
+
+    .task-card[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--line-strong); }
+
+    .task-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      letter-spacing: -0.015em;
+    }
+
+    .task-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .task-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .selected-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--faint);
+    }
+
+    .task-card[aria-pressed="true"] .selected-mark {
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+
+    .prompt-box,
+    .prompt-card {
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-raised);
+      overflow: hidden;
+    }
+
+    .prompt-toolbar,
+    .prompt-card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .prompt-toolbar strong,
+    .prompt-card-header strong {
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.78rem;
+    }
+
+    .prompt-body,
+    .prompt-card pre {
+      margin: 0;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.93rem;
+      line-height: 1.58;
+      color: var(--text);
+    }
+
+    .prompt-editor {
+      min-height: 260px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.93rem;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 11px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+
+    .check-row input {
+      width: 18px;
+      height: 18px;
+      min-height: auto;
+      margin-top: 2px;
+      accent-color: #111111;
+    }
+
+    [data-theme="dark"] .check-row input { accent-color: #ffffff; }
+    .check-row span { color: var(--muted); }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--surface-raised);
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      border-radius: var(--radius-sm);
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 13px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .summary-table th {
+      width: 32%;
+      background: var(--surface-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.76rem;
+    }
+
+    .summary-table tr:last-child th,
+    .summary-table tr:last-child td { border-bottom: 0; }
+
+    .status-line {
+      margin: 10px 0 0;
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .svg-window,
+    .svg-panel,
+    .svg-card,
+    .svg-doc,
+    .svg-table,
+    .svg-chip,
+    .svg-soft,
+    .svg-line,
+    .svg-text,
+    .svg-cursor {
+      transition: fill 0.25s ease, stroke 0.25s ease, color 0.25s ease;
+    }
+
+    .svg-window { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+    .svg-panel { fill: var(--surface-soft); stroke: var(--line); stroke-width: 1.3; }
+    .svg-card { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-doc { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-table { fill: none; stroke: var(--line); stroke-width: 1.2; }
+    .svg-chip { fill: var(--line-strong); stroke: var(--line-strong); }
+    .svg-soft { fill: var(--line); opacity: 0.45; }
+    .svg-line { stroke: var(--line-strong); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .svg-text { fill: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 11px; }
+    .svg-muted-text { fill: var(--muted); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 10px; }
+    .svg-cursor { fill: var(--text); stroke: var(--surface); stroke-width: 1.2; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+
+    @keyframes cursorLibrary {
+      0% { transform: translate(76px, 180px); }
+      32% { transform: translate(210px, 96px); }
+      43% { transform: translate(210px, 96px) scale(0.86); }
+      62% { transform: translate(350px, 142px); }
+      74% { transform: translate(350px, 142px) scale(0.86); }
+      100% { transform: translate(410px, 184px) scale(1); }
+    }
+
+    @keyframes pulseCell {
+      0%, 40% { opacity: 0; }
+      52%, 100% { opacity: 0.22; }
+    }
+
+    @keyframes typeIn {
+      0%, 30% { opacity: 0; transform: translateY(4px); }
+      45%, 100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 14px; }
+      .app-header,
+      .stage { padding: 20px; }
+      .app-header,
+      .data-grid,
+      .data-grid.three,
+      .form-grid { grid-template-columns: 1fr; }
+      .controls { justify-content: flex-start; }
+      .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tab { border-bottom: 1px solid var(--line); }
+      .illustration-container { min-height: 215px; }
+    }
+
+    @media (max-width: 560px) {
+      .brand-row,
+      .stage-head,
+      .notice { grid-template-columns: 1fr; display: grid; }
+      .tabs { grid-template-columns: 1fr; }
+      .tab { border-right: 0; }
+      .nav-row { flex-direction: column; }
+      .nav-actions { justify-content: flex-start; }
+      .task-card { grid-template-columns: auto minmax(0, 1fr); }
+      .selected-mark { display: none; }
+      .prompt-toolbar,
+      .prompt-card-header { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media print {
+      :root,
+      [data-theme="dark"] {
+        --bg: #ffffff;
+        --surface: #ffffff;
+        --surface-soft: #ffffff;
+        --surface-raised: #ffffff;
+        --text: #000000;
+        --muted: #000000;
+        --faint: #000000;
+        --line: #8f8f8f;
+        --line-strong: #000000;
+        --shadow: none;
+      }
+
+      html,
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0;
+      }
+
+      .app {
+        width: 100%;
+        max-width: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .app-header { border-bottom: 2px solid #000000; }
+
+      .controls,
+      .tabs,
+      .nav-row,
+      .prompt-toolbar .btn,
+      .prompt-card-header .btn,
+      .status-line {
+        display: none !important;
+      }
+
+      .stage { padding: 18px 0; }
+
+      .step-panel,
+      .step-panel.active {
+        display: block !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin: 0 0 24px;
+        padding: 0 18px 22px;
+        border-bottom: 1px solid #8f8f8f;
+      }
+
+      .illustration-container { display: none; }
+
+      .data-grid,
+      .data-grid.three,
+      .form-grid { grid-template-columns: 1fr 1fr; }
+
+      .data-block,
+      .notice,
+      .task-card,
+      .check-row,
+      .prompt-box,
+      .prompt-card,
+      input,
+      select,
+      textarea {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+      }
+
+      textarea { min-height: auto; height: auto; }
+      * { animation: none !important; }
+      .svg-cursor { display: none !important; }
+      a[href]::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h5"></path>
+            <path d="M16 16l3 3"></path>
+          </svg>
+        </div>
+        <div class="header-copy">
+          <h1>Harvey Prompt Library Management Studio</h1>
+          <p>Use this local planning tool to select, localise, review, and prepare a prompt-library entry for Harvey. The page helps educators distinguish faculty, student, clinic, and restricted prompt assets before testing or sharing.</p>
+        </div>
+      </div>
+      <div class="controls" aria-label="Page controls">
+        <button class="btn secondary" type="button" id="themeToggle">
+          <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Dark mode
+        </button>
+        <button class="btn ghost" type="button" id="printButton">
+          <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+          Print to PDF
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Prompt library management steps">
+      <button class="tab" type="button" data-step="0" aria-selected="true"><span class="tab-number">1</span><span class="tab-label">Orient</span></button>
+      <button class="tab" type="button" data-step="1" aria-selected="false"><span class="tab-number">2</span><span class="tab-label">Select</span></button>
+      <button class="tab" type="button" data-step="2" aria-selected="false"><span class="tab-number">3</span><span class="tab-label">Localise</span></button>
+      <button class="tab" type="button" data-step="3" aria-selected="false"><span class="tab-number">4</span><span class="tab-label">Govern</span></button>
+      <button class="tab" type="button" data-step="4" aria-selected="false"><span class="tab-number">5</span><span class="tab-label">Record</span></button>
+    </nav>
+
+    <main class="stage" id="stage">
+      <section class="step-panel active" data-panel="0">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+          </div>
+          <div>
+            <h2>Start with purpose, audience, and risk before choosing a prompt.</h2>
+            <p>The Prompt Library is useful when prompts are curated, localised, and governed. Treat existing library prompts as starting points that need review before faculty or student use.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-0" aria-hidden="true"></div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>Purpose</h3>
+            <p>This studio helps educators prepare prompt-library entries that are bounded, audience-appropriate, jurisdictionally localised, and reviewable before testing in Harvey.</p>
+          </article>
+          <article class="data-block">
+            <h3>Expected action</h3>
+            <p>Enter the teaching and governance context, select a prompt category, review the generated prompt, then decide whether it is suitable for faculty-only use, student-facing use, clinic use, or restricted access.</p>
+          </article>
+          <article class="data-block">
+            <h3>Boundary</h3>
+            <p>This page is a local planning aid. Nothing entered here is transmitted to Harvey. Copy the final prompt or library record into Harvey only after checking the review and governance criteria.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18"></path><path d="M5 8h14"></path><path d="M7 8l-3 6h6L7 8z"></path><path d="M17 8l-3 6h6l-3-6z"></path></svg></div>
+          <div>
+            <strong>Working principle</strong>
+            <p>Use the Library to support disciplined prompt reuse. A prompt is not ready merely because it exists; it should name the audience, jurisdiction, task, limits, output format, and verification requirement.</p>
+          </div>
+        </div>
+
+        <div class="form-grid" aria-label="Prompt library context fields">
+          <label>
+            Unit or teaching setting
+            <input id="unitName" type="text" placeholder="e.g. Contracts, Administrative Law, Legal Research">
+          </label>
+          <label>
+            Intended audience
+            <select id="audience">
+              <option>Academic staff</option>
+              <option>Teaching team</option>
+              <option>First-year LLB students</option>
+              <option>Later-year LLB students</option>
+              <option>JD students</option>
+              <option>LLM students</option>
+              <option>Clinic supervisors</option>
+              <option>Professional staff</option>
+            </select>
+          </label>
+          <label>
+            Jurisdiction or legal frame
+            <input id="jurisdiction" type="text" value="Australia" placeholder="e.g. Australia, NSW, Commonwealth">
+          </label>
+          <label>
+            Area of law or topic
+            <input id="topic" type="text" placeholder="e.g. consideration, judicial review, statutory interpretation">
+          </label>
+          <label>
+            Proposed visibility
+            <select id="visibility">
+              <option>Faculty only</option>
+              <option>Teaching team only</option>
+              <option>Student-facing after review</option>
+              <option>Clinic use only</option>
+              <option>Do not share yet</option>
+            </select>
+          </label>
+          <label>
+            Prompt source
+            <select id="sourceType">
+              <option>Existing Harvey Library prompt</option>
+              <option>Locally drafted prompt</option>
+              <option>Adapted prompt from a teaching activity</option>
+              <option>Prompt from workshop or colleague</option>
+            </select>
+          </label>
+          <label class="wide">
+            Intended use
+            <textarea id="intendedUse" placeholder="Describe what this prompt should help the user do, and what it should not do."></textarea>
+          </label>
+          <label class="wide">
+            Source limits or materials
+            <textarea id="sourceLimits" placeholder="Specify source limits, such as supplied judgment only, approved databases, unit materials, uploaded rubric, or populated Review Table."></textarea>
+          </label>
+        </div>
+
+        <div class="nav-row">
+          <span></span>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to prompt category</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="1">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 6h11"></path><path d="M9 12h11"></path><path d="M9 18h11"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
+          </div>
+          <div>
+            <h2>Select the prompt category that best matches the library entry.</h2>
+            <p>Choose the smallest useful category. Library prompts should support a defined legal education task rather than invite broad, unsourced, or final-answer outputs.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-1" aria-hidden="true"></div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>How to choose</h3>
+            <ol>
+              <li>Start with the teaching or workflow need.</li>
+              <li>Choose the lowest-risk useful prompt category.</li>
+              <li>Check whether the prompt should be faculty-only or student-facing.</li>
+              <li>Reject prompts that invite final legal advice, unverified authority use, or complete student answers.</li>
+            </ol>
+          </article>
+          <article class="data-block">
+            <h3>What to avoid</h3>
+            <p>Avoid generic prompts that ask Harvey to “explain the law” without jurisdiction, audience, source limits, output format, or verification instructions. Do not expose faculty-oriented prompts to students unless they have been deliberately adapted.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M8 17h7"></path></svg></div>
+          <div>
+            <strong>Selection rule</strong>
+            <p>Use a category that helps users practise or perform a reviewable step: structure, source checking, comparison, drafting for review, or workflow planning.</p>
+          </div>
+        </div>
+
+        <div class="task-list" id="taskList" aria-label="Prompt category options"></div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to localise prompt</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="2">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M15 17l4 4"></path></svg>
+          </div>
+          <div>
+            <h2>Localise the prompt before it becomes a reusable library asset.</h2>
+            <p>The suggested prompt combines the selected category with your context. Edit it to remove inappropriate assumptions, especially US legal framing, unsupported authority use, or audience mismatch.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-2" aria-hidden="true"></div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Review sequence</h3>
+            <ol>
+              <li>Check that audience, jurisdiction, topic, and intended use are explicit.</li>
+              <li>Replace generic or US-focused assumptions with local legal education context.</li>
+              <li>Add source limits, uncertainty instructions, and output format requirements.</li>
+              <li>Remove wording that asks for final legal advice, complete model answers, or unverified doctrinal claims.</li>
+            </ol>
+          </article>
+          <article class="data-block">
+            <h3>Quality standard</h3>
+            <p>A library-ready prompt should make the output easier to check. It should tell users what the prompt is for, when not to use it, and what must be verified before relying on the output.</p>
+          </article>
+        </div>
+
+        <div class="prompt-box" style="margin-top: 20px;">
+          <div class="prompt-toolbar">
+            <strong>Suggested localised prompt</strong>
+            <button class="btn secondary" type="button" id="regeneratePrompt">Regenerate from context</button>
+          </div>
+          <textarea id="promptEditor" class="prompt-editor" aria-label="Editable localised prompt"></textarea>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+          <div>
+            <strong>Before testing</strong>
+            <p>Read the prompt as though it were a public instruction to a research assistant. Any ambiguity that would produce poor human work is likely to produce poor tool-supported output.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to access controls</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="3">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-5"></path></svg>
+          </div>
+          <div>
+            <h2>Decide who should see, use, or change the prompt.</h2>
+            <p>Prompt-library governance is about visibility, contribution rights, and suitability. A prompt may be sound for staff but inappropriate for students without stronger limits and learning instructions.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-3" aria-hidden="true"></div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>Visibility decision</h3>
+            <p>Classify the prompt as faculty-only, teaching-team only, student-facing after review, clinic use only, or not ready to share. Do not assume all library users should see the same prompt.</p>
+          </article>
+          <article class="data-block">
+            <h3>Contribution control</h3>
+            <p>Student contribution to a central prompt library should be restricted unless a formal local process has authorised it. Prompt sharing should be curated rather than open-ended.</p>
+          </article>
+          <article class="data-block">
+            <h3>Localisation rule</h3>
+            <p>If the prompt originated from a US-focused or generic source, check terminology, jurisdiction, procedure, professional responsibility framing, and authority expectations before use.</p>
+          </article>
+        </div>
+
+        <div class="form-grid" aria-label="Governance fields" style="margin-top: 18px;">
+          <label>
+            Recommended access
+            <select id="accessDecision">
+              <option>Keep faculty-only</option>
+              <option>Share with teaching team only</option>
+              <option>Adapt for student-facing use</option>
+              <option>Restrict pending governance review</option>
+              <option>Archive or do not use</option>
+            </select>
+          </label>
+          <label>
+            Review owner
+            <input id="reviewOwner" type="text" placeholder="e.g. Unit coordinator, teaching team, project team, IT/admin">
+          </label>
+          <label class="wide">
+            Access-control note
+            <textarea id="accessNote" placeholder="Record any visibility, restriction, admin, or student-contribution issue that needs action before this prompt is shared."></textarea>
+          </label>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg></div>
+          <div>
+            <strong>Governance warning</strong>
+            <p>If a prompt could help students bypass the intended learning task, expose staff-only criteria, or generate unverified legal claims, keep it restricted and redesign it before student use.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to library record</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="4">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path><path d="M3 21h18"></path></svg>
+          </div>
+          <div>
+            <h2>Confirm the prompt is ready to test, save, or restrict.</h2>
+            <p>Use the checklist to decide whether the prompt can be tested in Harvey, saved as a faculty resource, adapted for students, or held back for governance review.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-4" aria-hidden="true"></div>
+
+        <div class="checklist" aria-label="Prompt library readiness checklist">
+          <label class="check-row"><input type="checkbox"><span><strong>Purpose is explicit.</strong> The prompt has a defined teaching, legal method, assessment, feedback, or governance purpose.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Audience is correct.</strong> The wording matches the intended users and does not expose faculty-only material to students.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Jurisdiction is localised.</strong> Generic or US-focused assumptions have been removed or replaced.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Task is bounded.</strong> The prompt asks for structure, analysis support, checking, drafting for review, or workflow planning rather than final legal advice.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Output format is specified.</strong> The prompt identifies the expected table, checklist, questions, notes, issues, or feedback themes.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Limits are stated.</strong> The prompt says not to invent authorities, not to exceed the requested scope, and to flag uncertainty.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Verification is built in.</strong> The user is told what must be checked against primary sources, approved legal databases, unit materials, or educator judgement.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Access is controlled.</strong> The prompt is assigned to the correct visibility category and any restriction issue is documented.</span></label>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h18v16H3z"></path><path d="M7 8h10"></path><path d="M7 12h10"></path><path d="M7 16h6"></path></svg></div>
+          <div>
+            <strong>Next action</strong>
+            <p>Copy the final prompt and the library record. Test the prompt in Harvey using low-risk material, revise the wording, and only then save or share the prompt in the relevant Library area.</p>
+          </div>
+        </div>
+
+        <div class="prompt-box" style="margin-top: 20px;">
+          <div class="prompt-toolbar">
+            <strong>Final prompt to test</strong>
+            <button class="btn secondary" type="button" id="copyPrompt">Copy prompt</button>
+          </div>
+          <pre class="prompt-body" id="finalPrompt"></pre>
+        </div>
+        <p class="status-line" id="copyStatus" aria-live="polite"></p>
+
+        <div class="prompt-box" style="margin-top: 18px;">
+          <div class="prompt-toolbar">
+            <strong>Prompt-library record</strong>
+            <button class="btn secondary" type="button" id="copyRecord">Copy record</button>
+          </div>
+          <pre class="prompt-body" id="libraryRecord"></pre>
+        </div>
+        <p class="status-line" id="recordStatus" aria-live="polite"></p>
+
+        <table class="summary-table" style="margin-top: 18px;" aria-label="Prompt library summary">
+          <tbody>
+            <tr><th scope="row">Selected category</th><td id="summaryCategory">—</td></tr>
+            <tr><th scope="row">Context</th><td id="summaryContext">—</td></tr>
+            <tr><th scope="row">Access decision</th><td id="summaryAccess">—</td></tr>
+            <tr><th scope="row">Review focus</th><td>Check jurisdiction, audience, source limits, output format, verification requirements, student-safety, and access controls.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <button class="btn ghost" type="button" id="restartButton">Restart</button>
+            <button class="btn ghost" type="button" id="printButtonBottom">Print to PDF</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="nav-row" style="margin: 0; padding: 18px 28px; background: var(--surface-soft);">
+      <button class="btn secondary" type="button" id="prevButton">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+        Previous
+      </button>
+      <div class="nav-actions">
+        <button class="btn secondary" type="button" id="playButton">
+          <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg>
+          Play
+        </button>
+        <button class="btn" type="button" id="nextButton">
+          Next
+          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var currentStep = 0;
+      var totalSteps = 5;
+      var autoplay = null;
+      var selectedTaskId = "teaching-prep";
+
+      var tasks = [
+        {
+          id: "teaching-prep",
+          code: "A",
+          title: "Teaching preparation",
+          description: "Use for seminar questions, teaching notes, revision activities, short explainers, and structured prompts for class preparation.",
+          prompt: "Create a teaching-support output for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nProduce a structured draft for educator review. Include: purpose, suggested structure, student-facing wording if appropriate, verification requirements, and one limitation or assumption. Do not provide final legal advice. Do not invent authorities. Flag any matter requiring human review before use."
+        },
+        {
+          id: "legal-method",
+          code: "B",
+          title: "Legal method support",
+          description: "Use for issue spotting, argument mapping, authority classification, doctrinal comparison, or statutory-interpretation scaffolds.",
+          prompt: "Support [AUDIENCE] with a legal method task in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nProvide a structured output that helps the user organise the legal method step without completing the final legal answer. Use headings or a table. Flag uncertainty, identify what must be checked against primary sources, and avoid unsupported propositions."
+        },
+        {
+          id: "verification",
+          code: "C",
+          title: "Verification and source checking",
+          description: "Use for authority audits, claim-checking tables, citation checking, and verification notes.",
+          prompt: "Create a verification workflow for [AUDIENCE] reviewing an output in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nProduce a table with: claim to check, source or authority required, verification action, risk if unchecked, and revision note. Classify claims as accurate, incomplete, misleading, unsupported, or fabricated where evidence allows. Do not invent authorities."
+        },
+        {
+          id: "assessment-design",
+          code: "D",
+          title: "Assessment design support",
+          description: "Use for drafting criteria, grade bands, assessment instructions, sample-outline structures, or moderation checklists.",
+          prompt: "Draft assessment-design support material for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nUse only supplied assessment instructions, ULOs, criteria, or unit materials. Produce a draft for educator review. Do not invent learning outcomes. Do not assign marks. Flag alignment, fairness, moderation, or policy issues requiring human review."
+        },
+        {
+          id: "feedback-drafting",
+          code: "E",
+          title: "Feedback drafting",
+          description: "Use for criteria-linked feedback themes, feed-forward comments, or cohort-level feedback drafted from anonymised evidence.",
+          prompt: "Create feedback-support material for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nUse only supplied anonymised material and criteria. Provide draft feedback themes or comments for educator review. Do not identify students. Do not assign marks or determine grades. Flag any judgement requiring academic moderation."
+        },
+        {
+          id: "professional-responsibility",
+          code: "F",
+          title: "Professional responsibility and boundaries",
+          description: "Use for privacy, confidentiality, disclosure, escalation, or responsible-use scenario prompts.",
+          prompt: "Create a professional responsibility prompt for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nThe output should help users decide whether material can be entered, redacted, avoided, or escalated. Include privacy, confidentiality, disclosure, fairness, and verification considerations. Do not request personally identifiable information or confidential client material."
+        },
+        {
+          id: "student-practice",
+          code: "G",
+          title: "Student-facing practice",
+          description: "Use for prompt refinement, authority-audit tasks, disclosure notes, and bounded tutorial activities.",
+          prompt: "Create a student-facing practice prompt for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nThe prompt should support learning rather than replace the task. It must include instructions to verify legal propositions, cite checked sources, disclose how Harvey was used, and explain what was accepted, rejected, or revised. Do not provide a complete model answer."
+        },
+        {
+          id: "prompt-governance",
+          code: "H",
+          title: "Prompt governance",
+          description: "Use for localising, reviewing, restricting, or documenting prompt-library assets before sharing.",
+          prompt: "Review this prompt-library candidate for [AUDIENCE] in [UNIT] on [TOPIC].\n\nJurisdiction or legal frame: [JURISDICTION].\nIntended use: [INTENDED USE].\nSource limits: [SOURCE LIMITS].\n\nAssess whether the prompt is suitable for the proposed audience and visibility. Identify any US-focused assumptions, legal or pedagogical risks, missing source limits, missing verification instructions, and access-control concerns. Recommend: faculty-only, teaching-team only, student-facing after revision, restricted pending review, or do not use."
+        }
+      ];
+
+      var fields = {
+        unitName: document.getElementById("unitName"),
+        audience: document.getElementById("audience"),
+        jurisdiction: document.getElementById("jurisdiction"),
+        topic: document.getElementById("topic"),
+        visibility: document.getElementById("visibility"),
+        sourceType: document.getElementById("sourceType"),
+        intendedUse: document.getElementById("intendedUse"),
+        sourceLimits: document.getElementById("sourceLimits"),
+        promptEditor: document.getElementById("promptEditor"),
+        accessDecision: document.getElementById("accessDecision"),
+        reviewOwner: document.getElementById("reviewOwner"),
+        accessNote: document.getElementById("accessNote")
+      };
+
+      var taskList = document.getElementById("taskList");
+      var tabs = document.querySelectorAll(".tab");
+      var panels = document.querySelectorAll(".step-panel");
+      var themeToggle = document.getElementById("themeToggle");
+      var playButton = document.getElementById("playButton");
+      var finalPrompt = document.getElementById("finalPrompt");
+      var libraryRecord = document.getElementById("libraryRecord");
+      var summaryCategory = document.getElementById("summaryCategory");
+      var summaryContext = document.getElementById("summaryContext");
+      var summaryAccess = document.getElementById("summaryAccess");
+      var copyStatus = document.getElementById("copyStatus");
+      var recordStatus = document.getElementById("recordStatus");
+
+      var cursor = '<path class="svg-cursor" d="M0,0 L15,15 L7,15 L0,23 Z"></path>';
+      var chrome = '<rect class="svg-window" x="20" y="18" width="520" height="250" rx="10"></rect><path class="svg-panel" d="M20 28 Q20 18 30 18 H530 Q540 18 540 28 V54 H20 Z"></path><circle cx="39" cy="36" r="4" class="svg-soft"></circle><circle cx="55" cy="36" r="4" class="svg-soft"></circle><circle cx="71" cy="36" r="4" class="svg-soft"></circle><text class="svg-muted-text" x="226" y="40">Harvey Library</text>';
+      var svgs = [
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-panel" x="42" y="76" width="130" height="164" rx="8"></rect><text class="svg-text" x="62" y="102">Library</text><rect class="svg-card" x="62" y="118" width="88" height="24" rx="5"></rect><rect class="svg-card" x="62" y="154" width="88" height="24" rx="5"></rect><rect class="svg-card" x="62" y="190" width="88" height="24" rx="5"></rect><rect class="svg-card" x="235" y="84" width="250" height="66" rx="9"></rect><text class="svg-text" x="258" y="112">Audience, jurisdiction, purpose</text><rect class="svg-card" x="235" y="174" width="250" height="66" rx="9"></rect><text class="svg-muted-text" x="258" y="202">Verification before sharing</text><path class="svg-line" d="M172 156 H235"></path><path class="svg-line" d="M360 150 V174"></path><g style="animation:cursorLibrary 4.5s infinite ease-in-out">' + cursor + '</g></svg>',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-panel" x="20" y="54" width="520" height="42"></rect><text class="svg-text" x="40" y="80">Prompt categories</text><rect class="svg-card" x="44" y="118" width="142" height="52" rx="8"></rect><text class="svg-muted-text" x="64" y="148">Teaching</text><rect class="svg-card" x="210" y="118" width="142" height="52" rx="8"></rect><text class="svg-muted-text" x="230" y="148">Verification</text><rect class="svg-card" x="376" y="118" width="142" height="52" rx="8"></rect><text class="svg-muted-text" x="396" y="148">Assessment</text><rect class="svg-chip" x="210" y="118" width="142" height="52" rx="8" style="animation:pulseCell 4.5s infinite;"></rect><rect class="svg-card" x="126" y="196" width="142" height="40" rx="8"></rect><text class="svg-muted-text" x="146" y="221">Student-safe?</text><rect class="svg-card" x="292" y="196" width="142" height="40" rx="8"></rect><text class="svg-muted-text" x="312" y="221">Staff-only?</text><g style="animation:cursorLibrary 4.5s infinite ease-in-out">' + cursor + '</g></svg>',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-card" x="52" y="78" width="456" height="60" rx="10"></rect><text class="svg-text" x="76" y="108">Original library prompt</text><rect class="svg-card" x="52" y="164" width="456" height="72" rx="10"></rect><text class="svg-text" x="76" y="194">Localised prompt</text><g style="animation:typeIn 4.5s infinite"><rect class="svg-chip" x="76" y="207" width="210" height="7" rx="4" opacity="0.25"></rect><rect class="svg-chip" x="76" y="222" width="310" height="7" rx="4" opacity="0.25"></rect></g><path class="svg-line" d="M280 138 V164"></path><path class="svg-line" d="M270 154 L280 164 L290 154"></path><text class="svg-muted-text" x="350" y="108">US / generic assumptions</text><text class="svg-muted-text" x="350" y="194">Australian frame + limits</text></svg>',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-card" x="70" y="86" width="150" height="64" rx="10"></rect><text class="svg-text" x="92" y="118">Faculty prompt</text><rect class="svg-card" x="340" y="86" width="150" height="64" rx="10"></rect><text class="svg-muted-text" x="362" y="118">Students hidden</text><path class="svg-line" d="M220 118 H340"></path><path class="svg-line" d="M330 108 L340 118 L330 128"></path><rect class="svg-card" x="70" y="188" width="150" height="48" rx="10"></rect><text class="svg-muted-text" x="92" y="218">Teaching team</text><rect class="svg-card" x="340" y="188" width="150" height="48" rx="10"></rect><text class="svg-muted-text" x="362" y="218">Reviewed asset</text><path class="svg-line" d="M220 212 H340"></path><g style="animation:cursorLibrary 4.5s infinite ease-in-out">' + cursor + '</g></svg>',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-panel" x="54" y="76" width="452" height="170" rx="12"></rect><text class="svg-text" x="82" y="106">Prompt library record</text><line class="svg-table" x1="54" y1="128" x2="506" y2="128"></line><line class="svg-table" x1="54" y1="164" x2="506" y2="164"></line><line class="svg-table" x1="54" y1="200" x2="506" y2="200"></line><line class="svg-table" x1="190" y1="128" x2="190" y2="246"></line><text class="svg-muted-text" x="82" y="151">Audience</text><text class="svg-muted-text" x="212" y="151">Visibility + limits</text><text class="svg-muted-text" x="82" y="187">Verify</text><text class="svg-muted-text" x="212" y="187">Sources, claims, jurisdiction</text><text class="svg-muted-text" x="82" y="223">Decision</text><text class="svg-muted-text" x="212" y="223">Test / restrict / share</text><circle class="svg-chip" cx="486" cy="226" r="12"></circle><path d="M480 226l4 4 8-10" stroke="var(--surface)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>'
+      ];
+
+      function clean(value, fallback) {
+        var text = String(value || "").trim();
+        return text.length ? text : fallback;
+      }
+
+      function getTask() {
+        for (var i = 0; i < tasks.length; i += 1) {
+          if (tasks[i].id === selectedTaskId) { return tasks[i]; }
+        }
+        return tasks[0];
+      }
+
+      function contextMap() {
+        return {
+          unit: clean(fields.unitName.value, "[UNIT OR TEACHING SETTING]"),
+          audience: clean(fields.audience.value, "[AUDIENCE]"),
+          jurisdiction: clean(fields.jurisdiction.value, "[JURISDICTION OR LEGAL FRAME]"),
+          topic: clean(fields.topic.value, "[AREA OF LAW OR TOPIC]"),
+          visibility: clean(fields.visibility.value, "[PROPOSED VISIBILITY]"),
+          sourceType: clean(fields.sourceType.value, "[PROMPT SOURCE]"),
+          intendedUse: clean(fields.intendedUse.value, "[INTENDED USE]"),
+          sourceLimits: clean(fields.sourceLimits.value, "[SOURCE LIMITS]"),
+          accessDecision: clean(fields.accessDecision.value, "[ACCESS DECISION]"),
+          reviewOwner: clean(fields.reviewOwner.value, "[REVIEW OWNER]"),
+          accessNote: clean(fields.accessNote.value, "[ACCESS-CONTROL NOTE]")
+        };
+      }
+
+      function fillPrompt(template) {
+        var ctx = contextMap();
+        return template
+          .replace(/\[UNIT\]/g, ctx.unit)
+          .replace(/\[AUDIENCE\]/g, ctx.audience)
+          .replace(/\[JURISDICTION\]/g, ctx.jurisdiction)
+          .replace(/\[TOPIC\]/g, ctx.topic)
+          .replace(/\[INTENDED USE\]/g, ctx.intendedUse)
+          .replace(/\[SOURCE LIMITS\]/g, ctx.sourceLimits);
+      }
+
+      function suggestedPrompt() {
+        return fillPrompt(getTask().prompt) + "\n\nLibrary-use note:\nThis prompt is a reusable support prompt, not a source of legal authority. The user must verify citations, legal propositions, quotations, jurisdictional fit, and suitability for the intended teaching or workflow purpose before relying on the output.";
+      }
+
+      function buildRecord() {
+        var ctx = contextMap();
+        var task = getTask();
+        return "Prompt library record\n" +
+          "Category: " + task.title + "\n" +
+          "Source: " + ctx.sourceType + "\n" +
+          "Unit / setting: " + ctx.unit + "\n" +
+          "Audience: " + ctx.audience + "\n" +
+          "Jurisdiction / legal frame: " + ctx.jurisdiction + "\n" +
+          "Topic: " + ctx.topic + "\n" +
+          "Proposed visibility: " + ctx.visibility + "\n" +
+          "Recommended access decision: " + ctx.accessDecision + "\n" +
+          "Review owner: " + ctx.reviewOwner + "\n\n" +
+          "Intended use:\n" + ctx.intendedUse + "\n\n" +
+          "Source limits / materials:\n" + ctx.sourceLimits + "\n\n" +
+          "Access-control note:\n" + ctx.accessNote + "\n\n" +
+          "Review requirements:\n" +
+          "- Check audience suitability.\n" +
+          "- Check jurisdictional localisation.\n" +
+          "- Check that the task is bounded and does not request final legal advice.\n" +
+          "- Check that the output format is explicit.\n" +
+          "- Check that verification and uncertainty instructions are included.\n" +
+          "- Check whether student visibility is appropriate.\n" +
+          "- Test using low-risk material before saving or sharing.\n\n" +
+          "Final prompt:\n" + (fields.promptEditor.value || suggestedPrompt());
+      }
+
+      function renderTasks() {
+        taskList.innerHTML = "";
+        tasks.forEach(function (task) {
+          var button = document.createElement("button");
+          button.type = "button";
+          button.className = "task-card";
+          button.setAttribute("aria-pressed", task.id === selectedTaskId ? "true" : "false");
+          button.innerHTML =
+            '<span class="task-tag">' + task.code + '</span>' +
+            '<span><h3>' + task.title + '</h3><p>' + task.description + '</p></span>' +
+            '<span class="selected-mark" aria-hidden="true">' + (task.id === selectedTaskId ? "✓" : "") + '</span>';
+          button.addEventListener("click", function () {
+            selectedTaskId = task.id;
+            fields.promptEditor.value = suggestedPrompt();
+            render();
+          });
+          taskList.appendChild(button);
+        });
+      }
+
+      function renderIllustrations() {
+        for (var i = 0; i < totalSteps; i += 1) {
+          var container = document.getElementById("illustration-" + i);
+          if (container && (!container.innerHTML || i === currentStep)) {
+            container.innerHTML = svgs[i];
+          }
+        }
+      }
+
+      function renderSteps() {
+        tabs.forEach(function (tab) {
+          var selected = Number(tab.getAttribute("data-step")) === currentStep;
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+        });
+        panels.forEach(function (panel) {
+          panel.classList.toggle("active", Number(panel.getAttribute("data-panel")) === currentStep);
+        });
+      }
+
+      function renderSummary() {
+        var ctx = contextMap();
+        var task = getTask();
+        finalPrompt.textContent = fields.promptEditor.value || suggestedPrompt();
+        libraryRecord.textContent = buildRecord();
+        summaryCategory.textContent = task.title;
+        summaryContext.textContent = ctx.unit + "; " + ctx.audience + "; " + ctx.jurisdiction + "; " + ctx.topic + ". Visibility: " + ctx.visibility + ".";
+        summaryAccess.textContent = ctx.accessDecision + ". Review owner: " + ctx.reviewOwner + ".";
+      }
+
+      function render() {
+        renderTasks();
+        renderSteps();
+        renderIllustrations();
+        renderSummary();
+      }
+
+      function goToStep(step) {
+        currentStep = Math.max(0, Math.min(totalSteps - 1, step));
+        render();
+      }
+
+      function stopAutoplay() {
+        if (autoplay) {
+          clearInterval(autoplay);
+          autoplay = null;
+          playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg> Play';
+        }
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        var temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        return Promise.resolve();
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          stopAutoplay();
+          goToStep(Number(tab.getAttribute("data-step")));
+        });
+      });
+
+      document.querySelectorAll("[data-next]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          stopAutoplay();
+          goToStep(currentStep + 1);
+        });
+      });
+
+      document.querySelectorAll("[data-prev]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          stopAutoplay();
+          goToStep(currentStep - 1);
+        });
+      });
+
+      document.getElementById("nextButton").addEventListener("click", function () {
+        stopAutoplay();
+        goToStep(currentStep + 1 >= totalSteps ? 0 : currentStep + 1);
+      });
+
+      document.getElementById("prevButton").addEventListener("click", function () {
+        stopAutoplay();
+        goToStep(currentStep - 1 < 0 ? totalSteps - 1 : currentStep - 1);
+      });
+
+      document.getElementById("restartButton").addEventListener("click", function () {
+        stopAutoplay();
+        goToStep(0);
+      });
+
+      themeToggle.addEventListener("click", function () {
+        var html = document.documentElement;
+        var nextTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", nextTheme);
+        themeToggle.innerHTML = nextTheme === "dark"
+          ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg> Light mode'
+          : '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> Dark mode';
+        renderIllustrations();
+      });
+
+      document.getElementById("regeneratePrompt").addEventListener("click", function () {
+        fields.promptEditor.value = suggestedPrompt();
+        renderSummary();
+      });
+
+      Object.keys(fields).forEach(function (key) {
+        fields[key].addEventListener("input", function () {
+          if (key !== "promptEditor" && key !== "accessDecision" && key !== "reviewOwner" && key !== "accessNote") {
+            var existing = fields.promptEditor.value.trim();
+            if (!existing || existing.indexOf("[UNIT") !== -1 || existing.indexOf("[AUDIENCE]") !== -1) {
+              fields.promptEditor.value = suggestedPrompt();
+            }
+          }
+          renderSummary();
+        });
+        fields[key].addEventListener("change", function () {
+          if (key !== "promptEditor" && key !== "accessDecision" && key !== "reviewOwner" && key !== "accessNote") {
+            var existing = fields.promptEditor.value.trim();
+            if (!existing || existing.indexOf("[UNIT") !== -1 || existing.indexOf("[AUDIENCE]") !== -1) {
+              fields.promptEditor.value = suggestedPrompt();
+            }
+          }
+          renderSummary();
+        });
+      });
+
+      document.getElementById("copyPrompt").addEventListener("click", function () {
+        copyText(finalPrompt.textContent).then(function () {
+          copyStatus.textContent = "Prompt copied. Test it in Harvey with low-risk material, then revise before saving or sharing.";
+        }).catch(function () {
+          copyStatus.textContent = "Copy failed. Select the prompt manually and copy it.";
+        });
+      });
+
+      document.getElementById("copyRecord").addEventListener("click", function () {
+        copyText(libraryRecord.textContent).then(function () {
+          recordStatus.textContent = "Prompt-library record copied. Store it with the prompt or use it for review before sharing.";
+        }).catch(function () {
+          recordStatus.textContent = "Copy failed. Select the record manually and copy it.";
+        });
+      });
+
+      playButton.addEventListener("click", function () {
+        if (autoplay) {
+          stopAutoplay();
+        } else {
+          autoplay = setInterval(function () {
+            currentStep = (currentStep + 1) % totalSteps;
+            render();
+          }, 4500);
+          playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6z"></path><path d="M14 4h4v16h-4z"></path></svg> Pause';
+        }
+      });
+
+      function printPage() {
+        stopAutoplay();
+        renderIllustrations();
+        window.print();
+      }
+
+      document.getElementById("printButton").addEventListener("click", printPage);
+      document.getElementById("printButtonBottom").addEventListener("click", printPage);
+
+      fields.promptEditor.value = suggestedPrompt();
+      render();
+    }());
+  </script>
+</body>
+</html>
