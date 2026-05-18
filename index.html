@@ -713,6 +713,55 @@
       font-size: 0.9rem;
     }
 
+    .resource-box {
+      margin: 0 28px 28px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-raised);
+      padding: 18px;
+    }
+
+    .resource-box h2 {
+      margin: 0 0 8px;
+      font-size: 1.12rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .resource-box p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .resource-link {
+      display: flex;
+      min-height: 74px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 0.9rem;
+      line-height: 1.2;
+      text-align: center;
+      text-decoration: none;
+      padding: 12px;
+    }
+
+    .resource-link:hover {
+      border-color: var(--line-strong);
+      background: var(--surface);
+    }
+
     .footer-note {
       padding: 18px 28px 26px;
       border-top: 1px solid var(--line);
@@ -743,7 +792,8 @@
       .data-grid.three,
       .data-grid.four,
       .page-grid,
-      .workflow-rail {
+      .workflow-rail,
+      .resource-list {
         grid-template-columns: 1fr;
       }
 
@@ -773,6 +823,10 @@
       .nav-row { flex-direction: column; }
 
       .nav-actions { justify-content: flex-start; }
+
+      .resource-box {
+        margin: 0 20px 20px;
+      }
     }
 
     @media print {
@@ -1215,6 +1269,18 @@
         </div>
       </section>
     </main>
+
+    <section class="resource-box" aria-labelledby="resources-heading">
+      <h2 id="resources-heading">Resources</h2>
+      <p>Access all five source PDF files in one place.</p>
+      <div class="resource-list">
+        <a class="resource-link" href="resources/1_Prompt_Library.pdf">Prompt Library</a>
+        <a class="resource-link" href="resources/2_Workflows_Build.pdf">Workflows Build</a>
+        <a class="resource-link" href="resources/5_Vault_Set_Up.pdf">Vault Set Up</a>
+        <a class="resource-link" href="resources/3_Teaching_Materials.pdf">Teaching Materials</a>
+        <a class="resource-link" href="resources/4_Assessment_and_Feedback.pdf">Assessment and Feedback</a>
+      </div>
+    </section>
 
     <footer class="footer-note">
       HarveyAI Teaching and Learning Resources | May 2026 | Law Ed Design | Stafford Lumsden
