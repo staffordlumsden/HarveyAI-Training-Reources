@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harvey Vault Set Up and Use</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --surface-soft: #f8f8f8;
+      --surface-raised: #ffffff;
+      --text: #111111;
+      --muted: #5f5f5f;
+      --faint: #8a8a8a;
+      --line: #d9d9d9;
+      --line-strong: #222222;
+      --button: #111111;
+      --button-text: #ffffff;
+      --button-soft: #eeeeee;
+      --button-soft-text: #111111;
+      --focus: #000000;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.10);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --container: 1000px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #050505;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --surface-raised: #1d1d1d;
+      --text: #f4f4f4;
+      --muted: #bdbdbd;
+      --faint: #8e8e8e;
+      --line: #3a3a3a;
+      --line-strong: #f0f0f0;
+      --button: #f4f4f4;
+      --button-text: #0a0a0a;
+      --button-soft: #242424;
+      --button-soft-text: #f4f4f4;
+      --focus: #ffffff;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.50);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      background:
+        linear-gradient(135deg, rgba(0, 0, 0, 0.045) 0, transparent 28%),
+        var(--bg);
+      color: var(--text);
+      padding: 28px;
+    }
+
+    [data-theme="dark"] body {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0, transparent 28%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button:focus,
+    input:focus,
+    textarea:focus,
+    a:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(100%, var(--container));
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: start;
+      padding: 28px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-raised);
+    }
+
+    .brand-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .brand-icon,
+    .signpost,
+    .mini-icon {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .brand-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 13px;
+    }
+
+    .brand-icon svg,
+    .signpost svg,
+    .mini-icon svg,
+    .btn svg,
+    .home-link svg {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-icon svg,
+    .signpost svg { width: 28px; height: 28px; }
+    .mini-icon svg,
+    .btn svg,
+    .home-link svg { width: 18px; height: 18px; }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      font-weight: 760;
+    }
+
+    .header-copy p {
+      margin: 9px 0 0;
+      max-width: 74ch;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn,
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 10px 15px;
+      cursor: pointer;
+      background: var(--button);
+      color: var(--button-text);
+      font-weight: 720;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn.secondary {
+      background: var(--button-soft);
+      color: var(--button-soft-text);
+      border-color: var(--line);
+    }
+
+    .btn.ghost,
+    .home-link {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .tab {
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 15px 9px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:last-child { border-right: 0; }
+
+    .tab[aria-selected="true"] {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: inset 0 -3px 0 var(--line-strong);
+    }
+
+    .tab-number {
+      display: inline-grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tab-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage {
+      padding: 28px;
+      background: var(--surface);
+    }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    .stage-head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .signpost {
+      width: 54px;
+      height: 54px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+
+    .stage-head h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+    }
+
+    .stage-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 78ch;
+    }
+
+    .animation-frame {
+      width: 100%;
+      min-height: 300px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 16px;
+      margin-bottom: 22px;
+    }
+
+    .animation-frame svg {
+      width: 100%;
+      max-width: 660px;
+      height: auto;
+      display: block;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .data-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .data-block {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      padding: 17px;
+    }
+
+    .data-block h3,
+    .data-block h4,
+    .notice strong,
+    .prompt-card-header strong {
+      margin: 0 0 8px;
+      font-size: 0.79rem;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-weight: 850;
+    }
+
+    .data-block p,
+    .data-block li {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .data-block p { margin: 0; }
+    .data-block ul,
+    .data-block ol { margin: 0; padding-left: 1.2rem; }
+
+    .notice {
+      margin: 22px 0;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 17px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      background: var(--surface-raised);
+    }
+
+    .mini-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+    }
+
+    .notice p { margin: 0; color: var(--muted); }
+
+    .prompt-card {
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-raised);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .prompt-card-header {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .prompt-card pre {
+      margin: 0;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.93rem;
+      line-height: 1.58;
+      color: var(--text);
+    }
+
+    .checklist {
+      display: grid;
+      gap: 11px;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 11px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+
+    .check-row input {
+      width: 18px;
+      height: 18px;
+      min-height: 18px;
+      margin-top: 2px;
+      accent-color: #111111;
+    }
+
+    [data-theme="dark"] .check-row input { accent-color: #ffffff; }
+
+    .check-row strong {
+      display: inline;
+      color: var(--text);
+    }
+
+    .check-row span {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-raised);
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 0.93rem;
+    }
+
+    th {
+      background: var(--surface-soft);
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    td { color: var(--muted); }
+    tr:last-child td { border-bottom: 0; }
+    th:last-child,
+    td:last-child { border-right: 0; }
+
+    .nav-row {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .status-line {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-note {
+      padding: 18px 28px 26px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      border-top: 1px solid var(--line);
+      background: var(--surface-raised);
+    }
+
+    .svg-window { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+    .svg-panel { fill: var(--surface-soft); stroke: var(--line); stroke-width: 1.3; }
+    .svg-card { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-doc { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-table { fill: none; stroke: var(--line); stroke-width: 1.2; }
+    .svg-chip { fill: var(--line-strong); stroke: var(--line-strong); }
+    .svg-soft { fill: var(--line); opacity: 0.45; }
+    .svg-line {
+      stroke: var(--line-strong);
+      stroke-width: 1.4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .svg-dash {
+      stroke: var(--line-strong);
+      stroke-width: 1.4;
+      stroke-dasharray: 6 7;
+      fill: none;
+      stroke-linecap: round;
+    }
+    .svg-text {
+      fill: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 11px;
+    }
+    .svg-muted-text {
+      fill: var(--muted);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 10px;
+    }
+    .svg-cursor {
+      fill: var(--text);
+      stroke: var(--surface);
+      stroke-width: 1.2;
+      filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+      animation: cursorDash 4.8s ease-in-out infinite;
+    }
+    .svg-file { animation: fileDrag 4.8s ease-in-out infinite; }
+    .svg-pulse { animation: cellPulse 4.8s ease-in-out infinite; }
+    .svg-type { animation: typeIn 4.8s ease-in-out infinite; }
+
+    @keyframes cursorDash {
+      0% { transform: translate(95px, 150px); }
+      38% { transform: translate(258px, 118px); }
+      52% { transform: translate(258px, 118px) scale(0.88); }
+      70% { transform: translate(355px, 173px); }
+      100% { transform: translate(414px, 204px); }
+    }
+
+    @keyframes fileDrag {
+      0%, 24% { transform: translate(0, 0); }
+      50%, 100% { transform: translate(172px, 16px); }
+    }
+
+    @keyframes cellPulse {
+      0%, 48% { opacity: 0; }
+      58%, 100% { opacity: 0.30; }
+    }
+
+    @keyframes typeIn {
+      0%, 34% { opacity: 0; transform: translateY(4px); }
+      48%, 100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 14px; }
+
+      .app-header,
+      .stage {
+        padding: 20px;
+      }
+
+      .app-header,
+      .data-grid,
+      .data-grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tab {
+        border-bottom: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .brand-row,
+      .stage-head,
+      .notice {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-row {
+        display: grid;
+      }
+
+      .tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .tab {
+        border-right: 0;
+      }
+
+      .nav-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media print {
+      :root,
+      [data-theme="dark"] {
+        --bg: #ffffff;
+        --surface: #ffffff;
+        --surface-soft: #ffffff;
+        --surface-raised: #ffffff;
+        --text: #000000;
+        --muted: #000000;
+        --faint: #000000;
+        --line: #8f8f8f;
+        --line-strong: #000000;
+        --shadow: none;
+      }
+
+      html,
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0;
+      }
+
+      .app {
+        width: 100%;
+        max-width: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .app-header {
+        border-bottom: 2px solid #000000;
+      }
+
+      .controls,
+      .tabs,
+      .nav-row,
+      .prompt-card-header .btn,
+      .status-line {
+        display: none !important;
+      }
+
+      .stage {
+        padding: 18px 0;
+      }
+
+      .step-panel,
+      .step-panel.active {
+        display: block !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin: 0 0 24px;
+        padding: 0 18px 22px;
+        border-bottom: 1px solid #8f8f8f;
+      }
+
+      .data-block,
+      .notice,
+      .prompt-card,
+      .check-row,
+      input,
+      textarea {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+      }
+
+      * {
+        animation: none !important;
+      }
+
+      .svg-cursor {
+        display: none !important;
+      }
+
+      a[href]::after {
+        content: "";
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h5"></path>
+            <path d="M16 16l3 3"></path>
+          </svg>
+        </div>
+        <div class="header-copy">
+          <h1>Harvey Vault Set Up and Use</h1>
+          <p>A Canvas-safe walkthrough for creating a bounded Vault corpus, building a Review Table, checking citations, and turning verified outputs into teaching materials.</p>
+        </div>
+      </div>
+
+      <div class="controls" aria-label="Page controls">
+        <a class="home-link" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11l9-8 9 8"></path>
+            <path d="M5 10v10h14V10"></path>
+            <path d="M9 20v-6h6v6"></path>
+          </svg>
+          Home
+        </a>
+        <button class="btn secondary" type="button" id="themeToggle">Dark mode</button>
+        <button class="btn ghost" type="button" id="printButton">Print to PDF</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Walkthrough steps">
+      <button class="tab" type="button" data-step="0" aria-selected="true">
+        <span class="tab-number">1</span>
+        <span class="tab-label">Orient</span>
+      </button>
+      <button class="tab" type="button" data-step="1" aria-selected="false">
+        <span class="tab-number">2</span>
+        <span class="tab-label">Curate</span>
+      </button>
+      <button class="tab" type="button" data-step="2" aria-selected="false">
+        <span class="tab-number">3</span>
+        <span class="tab-label">Create</span>
+      </button>
+      <button class="tab" type="button" data-step="3" aria-selected="false">
+        <span class="tab-number">4</span>
+        <span class="tab-label">Table</span>
+      </button>
+      <button class="tab" type="button" data-step="4" aria-selected="false">
+        <span class="tab-number">5</span>
+        <span class="tab-label">Ask</span>
+      </button>
+      <button class="tab" type="button" data-step="5" aria-selected="false">
+        <span class="tab-number">6</span>
+        <span class="tab-label">Teach</span>
+      </button>
+    </nav>
+
+    <main class="stage" id="stage">
+      <section class="step-panel active" data-panel="0">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 10v6"></path>
+              <path d="M12 7h.01"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Treat Vault as a controlled document workspace.</h2>
+            <p>Vault is useful when an educator has a defined corpus and a defined teaching task. It should not be used as a shortcut around legal judgement, source checking, or educator responsibility.</p>
+          </div>
+        </div>
+
+        <div class="animation-frame" role="img" aria-label="Monochrome interface animation showing source documents moving into a bounded Vault and then into a Review Table.">
+          <svg viewBox="0 0 560 310" aria-hidden="true">
+            <rect class="svg-window" x="20" y="18" width="520" height="268" rx="10"></rect>
+            <path class="svg-panel" d="M20 28 Q20 18 30 18 H530 Q540 18 540 28 V54 H20 Z"></path>
+            <circle cx="39" cy="36" r="4" class="svg-soft"></circle>
+            <circle cx="55" cy="36" r="4" class="svg-soft"></circle>
+            <circle cx="71" cy="36" r="4" class="svg-soft"></circle>
+            <text class="svg-muted-text" x="244" y="40">Harvey Vault</text>
+
+            <rect class="svg-panel" x="52" y="82" width="126" height="152" rx="10"></rect>
+            <text class="svg-text" x="75" y="106">Source set</text>
+            <g class="svg-file">
+              <rect class="svg-doc" x="76" y="126" width="74" height="52" rx="7"></rect>
+              <path class="svg-line" d="M91 145h45"></path>
+              <path class="svg-line" d="M91 160h31"></path>
+            </g>
+
+            <rect class="svg-card" x="228" y="82" width="126" height="152" rx="12"></rect>
+            <text class="svg-text" x="267" y="108">Vault</text>
+            <path class="svg-line" d="M255 132h72"></path>
+            <path class="svg-line" d="M255 151h48"></path>
+            <path class="svg-line" d="M255 170h62"></path>
+            <text class="svg-muted-text" x="252" y="205">bounded corpus</text>
+
+            <rect class="svg-panel" x="400" y="82" width="110" height="152" rx="10"></rect>
+            <text class="svg-text" x="425" y="106">Review Table</text>
+            <path class="svg-table" d="M420 130h70M420 152h70M420 174h70M420 196h70M443 124v78M466 124v78"></path>
+            <rect class="svg-chip svg-pulse" x="444" y="153" width="22" height="20"></rect>
+
+            <path class="svg-dash" d="M180 154 H225"></path>
+            <path class="svg-dash" d="M354 154 H398"></path>
+            <g class="svg-type">
+              <rect class="svg-card" x="190" y="246" width="184" height="30" rx="8"></rect>
+              <text class="svg-muted-text" x="206" y="266">Verify before teaching use</text>
+            </g>
+            <path class="svg-cursor" d="M0,0 L15,15 L7,15 L0,23 Z"></path>
+          </svg>
+        </div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Purpose</h3>
+            <p>Create a bounded, searchable workspace for extracting, comparing, and verifying information from defined documents.</p>
+          </article>
+          <article class="data-block">
+            <h3>Human role</h3>
+            <p>The educator determines the task, checks the sources, corrects the output, and decides whether anything is suitable for student-facing use.</p>
+          </article>
+          <article class="data-block">
+            <h3>Boundary</h3>
+            <p>Do not treat Vault output as authority until it has been checked against the source documents and, where relevant, an external legal database.</p>
+          </article>
+          <article class="data-block">
+            <h3>Use cases</h3>
+            <p>Use Vault for case comparison, assessment moderation, lecture-note updating, issue spotting, authority checking, or cohort-level analysis of anonymised submissions.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"></path>
+              <path d="M9 12l2 2 4-5"></path>
+            </svg>
+          </div>
+          <div>
+            <strong>Working principle</strong>
+            <p>Use Harvey to organise, extract, compare, or draft material for review. Do not use it to replace source verification, privacy checks, or legal method.</p>
+          </div>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <span class="status-line" id="status-0">Section 1 of 6</span>
+          <div class="nav-actions">
+            <button class="btn" type="button" data-next>Curate documents</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="1">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v14H4z"></path>
+              <path d="M8 9h8"></path>
+              <path d="M8 13h5"></path>
+              <path d="M8 17h7"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Define the purpose and curate the corpus before upload.</h2>
+            <p>The quality of a Vault task depends on what is included, what is excluded, and what the educator asks the workspace to support.</p>
+          </div>
+        </div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>1. Define the purpose</h3>
+            <p>Decide whether the Vault is for case comparison, moderation, lecture-note updating, issue spotting, authority checking, or cohort-level analysis.</p>
+          </article>
+          <article class="data-block">
+            <h3>2. Check the data boundary</h3>
+            <p>For student work, remove names, student IDs, file metadata, comments, and any other personally identifiable information before upload.</p>
+          </article>
+          <article class="data-block">
+            <h3>3. Curate the corpus</h3>
+            <p>Upload only the material needed for the task, such as two judgments, one statute, an approved source extract, or anonymised submissions.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 3H5v18h14V8l-5-5h-4z"></path>
+              <path d="M14 3v5h5"></path>
+              <path d="M8 13h8"></path>
+              <path d="M8 17h5"></path>
+            </svg>
+          </div>
+          <div>
+            <strong>Selection rule</strong>
+            <p>A good Vault begins with a narrow use case and a safe upload set. Avoid uploading everything and hoping the workspace will impose structure later.</p>
+          </div>
+        </div>
+
+        <div class="checklist" aria-label="Pre-upload checklist">
+          <label class="check-row"><input type="checkbox"><span><strong>Purpose is explicit.</strong> The task names the unit, cohort, jurisdiction, and intended teaching use.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Files are permitted.</strong> Upload rights, copyright or licence conditions, and confidentiality limits have been checked.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>PII is removed.</strong> Names, IDs, metadata, comments, and identifying details have been removed where required.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Corpus is bounded.</strong> Every document is necessary for the task and irrelevant files are excluded.</span></label>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <button class="btn ghost" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <span class="status-line" id="status-1">Section 2 of 6</span>
+            <button class="btn" type="button" data-next>Create Vault</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="2">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 7h16"></path>
+              <path d="M6 7v12h12V7"></path>
+              <path d="M9 11h6"></path>
+              <path d="M9 15h4"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Create a named Vault and confirm the contents before analysis.</h2>
+            <p>Begin with a workspace name that records the subject and purpose. Then upload only the selected files, allow processing, and run a source-identification check.</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Educator action</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Create a new Vault</td>
+                <td>Use a clear name such as Contracts - Australian Woollen Mills case summary or Admin Law - Sharma case comparison.</td>
+                <td>A named Vault workspace.</td>
+              </tr>
+              <tr>
+                <td>Upload the files</td>
+                <td>Add selected PDFs, Word documents, or other permitted files. Keep filenames meaningful, for example Sharma_FCA_2021.pdf.</td>
+                <td>Uploaded source documents.</td>
+              </tr>
+              <tr>
+                <td>Allow indexing</td>
+                <td>Wait for processing to complete before asking questions. Do not begin analysis while indexing is incomplete.</td>
+                <td>Confirmation that the corpus is usable.</td>
+              </tr>
+              <tr>
+                <td>Run a source check</td>
+                <td>Ask Harvey to list the documents, identify their apparent type, and flag anything irrelevant.</td>
+                <td>A quick quality check of Vault contents.</td>
+              </tr>
+              <tr>
+                <td>Ask a bounded first query</td>
+                <td>Start with procedural posture, legal issue, outcome, and key paragraphs. Do not ask for broad legal analysis first.</td>
+                <td>A first structured output.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Source-identification check</strong>
+            <button class="btn secondary" type="button" data-copy="List the documents in this Vault, identify their apparent document type, and flag any file that appears irrelevant to the task. Do not summarise the law yet.">Copy query</button>
+          </div>
+          <pre>List the documents in this Vault, identify their apparent document type, and flag any file that appears irrelevant to the task. Do not summarise the law yet.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Bounded first query</strong>
+            <button class="btn secondary" type="button" data-copy="Using only the documents in this Vault, identify the procedural posture, legal issue, outcome, and key paragraphs for each judgment. Do not infer beyond the source text.">Copy query</button>
+          </div>
+          <pre>Using only the documents in this Vault, identify the procedural posture, legal issue, outcome, and key paragraphs for each judgment. Do not infer beyond the source text.</pre>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <button class="btn ghost" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <span class="status-line" id="status-2">Section 3 of 6</span>
+            <button class="btn" type="button" data-next>Build table</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="3">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v14H4z"></path>
+              <path d="M4 11h16"></path>
+              <path d="M10 5v14"></path>
+              <path d="M16 5v14"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Build the Review Table around legal components, not generic summary.</h2>
+            <p>Use Review Tables where the task involves multiple files or repeated extraction. Columns should map to the legal and teaching work the educator intends to do.</p>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Column design</h3>
+            <p>Avoid generic columns like summary. Prefer issue, authority cited, statutory provision, reasoning, application, error, omission, evidence of synthesis, source paragraph, or teaching use.</p>
+          </article>
+          <article class="data-block">
+            <h3>Custom extraction</h3>
+            <p>Write a precise instruction for each column. Ask for source references and require uncertainty to be flagged where the document does not support the cell.</p>
+          </article>
+          <article class="data-block">
+            <h3>Citation checking</h3>
+            <p>Click through citations supporting each table cell. Verify extracted information against original documents and edit cells where needed.</p>
+          </article>
+          <article class="data-block">
+            <h3>Manual notes</h3>
+            <p>Add educator comments, moderation notes, verification status, teaching use, or risk flags as manual columns.</p>
+          </article>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Example extraction instruction</strong>
+            <button class="btn secondary" type="button" data-copy="Identify each authority cited in the document. Include the citation as written, the legal proposition for which it is used, and the paragraph or page reference if available.">Copy instruction</button>
+          </div>
+          <pre>Identify each authority cited in the document. Include the citation as written, the legal proposition for which it is used, and the paragraph or page reference if available.</pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Extraction instruction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Case / document</td><td>Identify the case name, citation, court, and year.</td></tr>
+              <tr><td>Procedural posture</td><td>State whether the document is first instance, appeal, special leave, judgment, reasons, submission, or commentary.</td></tr>
+              <tr><td>Core legal issue</td><td>Identify the main legal issue addressed in the document.</td></tr>
+              <tr><td>Key statutory provisions</td><td>Extract statutory provisions discussed, with section numbers.</td></tr>
+              <tr><td>Authorities cited</td><td>List authorities cited and the proposition for which each is used.</td></tr>
+              <tr><td>Holding / outcome</td><td>State the result, without adding commentary not supported by the document.</td></tr>
+              <tr><td>Reasoning</td><td>Summarise the reasoning in 3-5 concise points, with source references.</td></tr>
+              <tr><td>Point for teaching</td><td>Identify one aspect useful for class discussion.</td></tr>
+              <tr><td>Verification status</td><td>Manual column: verified / needs checking / incorrect / unsupported.</td></tr>
+              <tr><td>Educator note</td><td>Manual column for teaching or moderation comments.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <button class="btn ghost" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <span class="status-line" id="status-3">Section 4 of 6</span>
+            <button class="btn" type="button" data-next>Ask and verify</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="4">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v10H7l-3 3z"></path>
+              <path d="M8 9h8"></path>
+              <path d="M8 12h5"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Ask across the populated table, then verify every claim.</h2>
+            <p>Once the Review Table is populated, ask comparative or synthetic questions. Keep the prompt anchored to the table and require uncertainty to be visible.</p>
+          </div>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Review Table extraction prompt</strong>
+            <button class="btn secondary" type="button" data-copy="For each document in this Vault, extract the case name or document title, court or source, legal issue, relevant statutory provisions, authorities cited, outcome, key reasoning, and source paragraph references. Keep each cell concise. Do not infer beyond the source text. Flag uncertainty where the document does not provide enough information.">Copy prompt</button>
+          </div>
+          <pre>For each document in this Vault, extract the case name or document title, court or source, legal issue, relevant statutory provisions, authorities cited, outcome, key reasoning, and source paragraph references. Keep each cell concise. Do not infer beyond the source text. Flag uncertainty where the document does not provide enough information.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Ask-across-table prompt</strong>
+            <button class="btn secondary" type="button" data-copy="Using only the populated table, identify the three most common issue-spotting omissions and give one anonymised example of each. Flag any uncertainty.">Copy prompt</button>
+          </div>
+          <pre>Using only the populated table, identify the three most common issue-spotting omissions and give one anonymised example of each. Flag any uncertainty.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Verification prompt</strong>
+            <button class="btn secondary" type="button" data-copy="For each claim in the draft output, identify the supporting source document and paragraph, page, or citation. Flag any claim that is unsupported, incomplete, ambiguous, or requires checking against an external legal database.">Copy prompt</button>
+          </div>
+          <pre>For each claim in the draft output, identify the supporting source document and paragraph, page, or citation. Flag any claim that is unsupported, incomplete, ambiguous, or requires checking against an external legal database.</pre>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <div>
+            <strong>Verification focus</strong>
+            <p>Record at least one verified strength, one correction, and one unresolved issue. These notes make the activity useful for teaching rather than simply presentable as a demonstration.</p>
+          </div>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <button class="btn ghost" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <span class="status-line" id="status-4">Section 5 of 6</span>
+            <button class="btn" type="button" data-next>Teach and share</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="5">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"></path>
+              <path d="M8 7h6"></path>
+              <path d="M8 11h6"></path>
+              <path d="M8 15h4"></path>
+            </svg>
+          </div>
+          <div>
+            <h2>Translate verified Vault work into learning design.</h2>
+            <p>Use verified outputs to draft seminar questions, worked examples, feedback themes, common-error notes, or revision activities. Avoid giving a complete model answer unless that is the intended teaching design.</p>
+          </div>
+        </div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>Convert output</h3>
+            <p>Turn checked table outputs into teaching artefacts that support comprehension, comparison, evaluation, or feedback.</p>
+          </article>
+          <article class="data-block">
+            <h3>Document workflow</h3>
+            <p>Record what was uploaded, what Harvey was used for, what was checked, what was corrected, and what was not relied upon.</p>
+          </article>
+          <article class="data-block">
+            <h3>Share carefully</h3>
+            <p>Share a Vault or table only with the correct group and only after confirming data permissions, copyright or licence conditions, and teaching relevance.</p>
+          </article>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header">
+            <strong>Teaching-use prompt</strong>
+            <button class="btn secondary" type="button" data-copy="Using only the verified Review Table, draft five seminar discussion questions for later-year Australian law students. The questions should move from comprehension to comparison and evaluation. Do not provide model answers. Identify which table columns support each question.">Copy prompt</button>
+          </div>
+          <pre>Using only the verified Review Table, draft five seminar discussion questions for later-year Australian law students. The questions should move from comprehension to comparison and evaluation. Do not provide model answers. Identify which table columns support each question.</pre>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path>
+            </svg>
+          </div>
+          <div>
+            <strong>Audit note</strong>
+            <p>A short audit note supports accountable use and keeps disclosure, verification, and human-led judgement visible.</p>
+          </div>
+        </div>
+
+        <div class="checklist" aria-label="Minimum safe-use checklist">
+          <label class="check-row"><input type="checkbox"><span><strong>Corpus boundary.</strong> I uploaded only the documents needed for this task.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Data protection.</strong> I removed PII and sensitive metadata where required.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Jurisdiction.</strong> The relevant jurisdiction is explicit.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Source grounding.</strong> Each legal proposition can be traced to a source.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Verification.</strong> Citations, quotations, and legal characterisations have been checked.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Educational purpose.</strong> The output supports learning rather than shortcutting the task.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Human judgement.</strong> I reviewed, corrected, and contextualised the output before use.</span></label>
+        </div>
+
+        <div class="nav-row" aria-label="Section navigation">
+          <button class="btn ghost" type="button" data-prev>Back</button>
+          <div class="nav-actions">
+            <span class="status-line" id="status-5">Section 6 of 6</span>
+            <button class="btn" type="button" data-step-target="0">Return to start</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      Adapted from the May 2026 Harvey Vault setup guide for a standalone Canvas-safe HTML walkthrough. The page uses only inline HTML, CSS, SVG, and vanilla JavaScript.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var currentStep = 0;
+      var totalSteps = 6;
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+      var panels = Array.prototype.slice.call(document.querySelectorAll(".step-panel"));
+      var themeToggle = document.getElementById("themeToggle");
+      var printButton = document.getElementById("printButton");
+      var statusLines = Array.prototype.slice.call(document.querySelectorAll(".status-line"));
+
+      function goToStep(step) {
+        if (step < 0) { step = 0; }
+        if (step >= totalSteps) { step = totalSteps - 1; }
+        currentStep = step;
+        render();
+      }
+
+      function render() {
+        tabs.forEach(function (tab) {
+          var selected = Number(tab.getAttribute("data-step")) === currentStep;
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+        });
+
+        panels.forEach(function (panel) {
+          panel.classList.toggle("active", Number(panel.getAttribute("data-panel")) === currentStep);
+        });
+
+        statusLines.forEach(function (line) {
+          line.textContent = "Section " + (currentStep + 1) + " of " + totalSteps;
+        });
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+
+        var temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        return Promise.resolve();
+      }
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          goToStep(Number(tab.getAttribute("data-step")));
+        });
+      });
+
+      document.querySelectorAll("[data-next]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          goToStep(currentStep + 1);
+        });
+      });
+
+      document.querySelectorAll("[data-prev]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          goToStep(currentStep - 1);
+        });
+      });
+
+      document.querySelectorAll("[data-step-target]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          goToStep(Number(button.getAttribute("data-step-target")));
+        });
+      });
+
+      document.querySelectorAll("[data-copy]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var original = button.textContent;
+          copyText(button.getAttribute("data-copy")).then(function () {
+            button.textContent = "Copied";
+            window.setTimeout(function () {
+              button.textContent = original;
+            }, 1400);
+          });
+        });
+      });
+
+      themeToggle.addEventListener("click", function () {
+        var html = document.documentElement;
+        var nextTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", nextTheme);
+        themeToggle.textContent = nextTheme === "dark" ? "Light mode" : "Dark mode";
+      });
+
+      printButton.addEventListener("click", function () {
+        window.print();
+      });
+
+      render();
+    }());
+  </script>
+</body>
+</html>
