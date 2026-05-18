@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teaching Materials with HarveyAI | Canvas-Safe Walkthrough</title>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --surface-soft: #f8f8f8;
+      --surface-raised: #ffffff;
+      --text: #111111;
+      --muted: #5f5f5f;
+      --faint: #8a8a8a;
+      --line: #d9d9d9;
+      --line-strong: #222222;
+      --button: #111111;
+      --button-text: #ffffff;
+      --button-soft: #eeeeee;
+      --button-soft-text: #111111;
+      --focus: #000000;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.10);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --container: 1000px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #050505;
+      --surface: #111111;
+      --surface-soft: #171717;
+      --surface-raised: #1d1d1d;
+      --text: #f4f4f4;
+      --muted: #bdbdbd;
+      --faint: #8e8e8e;
+      --line: #3a3a3a;
+      --line-strong: #f0f0f0;
+      --button: #f4f4f4;
+      --button-text: #0a0a0a;
+      --button-soft: #242424;
+      --button-soft-text: #f4f4f4;
+      --focus: #ffffff;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.50);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; background: var(--bg); color: var(--text); }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      background:
+        linear-gradient(135deg, rgba(0, 0, 0, 0.045) 0, transparent 28%),
+        var(--bg);
+      color: var(--text);
+      padding: 28px;
+    }
+
+    [data-theme="dark"] body {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0, transparent 28%),
+        var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button:focus, input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(100%, var(--container));
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: start;
+      padding: 28px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-raised);
+    }
+
+    .brand-row { display: flex; align-items: center; gap: 16px; }
+
+    .brand-icon, .signpost, .mini-icon {
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .brand-icon { width: 58px; height: 58px; border-radius: 13px; }
+    .signpost { width: 54px; height: 54px; border-radius: var(--radius-sm); background: var(--surface-soft); }
+    .mini-icon { width: 36px; height: 36px; border-radius: 10px; }
+
+    .brand-icon svg, .signpost svg, .mini-icon svg, .btn svg {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-icon svg, .signpost svg { width: 28px; height: 28px; }
+    .mini-icon svg, .btn svg { width: 18px; height: 18px; }
+
+    .header-copy h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      line-height: 1.04;
+      letter-spacing: -0.045em;
+      font-weight: 760;
+    }
+
+    .header-copy p {
+      margin: 9px 0 0;
+      max-width: 74ch;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 10px 15px;
+      cursor: pointer;
+      background: var(--button);
+      color: var(--button-text);
+      font-weight: 720;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn.secondary { background: var(--button-soft); color: var(--button-soft-text); border-color: var(--line); }
+    .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .tab {
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 15px 10px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+    }
+
+    .tab:last-child { border-right: 0; }
+    .tab[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: inset 0 -3px 0 var(--line-strong); }
+
+    .tab-number {
+      display: inline-grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tab-label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage { padding: 28px; background: var(--surface); }
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    .stage-head {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .stage-head h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+    }
+
+    .stage-head p { margin: 8px 0 0; color: var(--muted); max-width: 80ch; }
+
+    .illustration-container {
+      width: 100%;
+      min-height: 245px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      margin: 0 0 22px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .illustration-container svg { width: 100%; max-width: 640px; height: auto; display: block; }
+
+    .data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .data-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .data-block {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      padding: 17px;
+    }
+
+    .data-block h3, .data-block h4, .notice strong, .prompt-card-header strong, .prompt-toolbar strong {
+      margin: 0 0 8px;
+      font-size: 0.79rem;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-weight: 850;
+    }
+
+    .data-block p, .data-block li, .notice p { color: var(--muted); font-size: 0.96rem; }
+    .data-block p { margin: 0; }
+    .data-block ul, .data-block ol { margin: 0; padding-left: 1.2rem; }
+
+    .notice {
+      margin: 22px 0;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 17px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      background: var(--surface-raised);
+    }
+
+    .notice strong { display: block; margin-bottom: 3px; }
+    .notice p { margin: 0; }
+
+    .task-list { display: grid; gap: 12px; }
+
+    .task-card {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+      padding: 17px;
+      text-align: left;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .task-card:hover, .task-card[aria-pressed="true"] { border-color: var(--line-strong); background: var(--surface-raised); }
+    .task-card[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--line-strong); }
+    .task-card h3 { margin: 0 0 6px; font-size: 1rem; letter-spacing: -0.015em; }
+    .task-card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+
+    .task-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .selected-mark {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--faint);
+    }
+
+    .task-card[aria-pressed="true"] .selected-mark { border-color: var(--line-strong); color: var(--text); }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--text);
+      font-size: 0.79rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-weight: 850;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px 13px;
+      background: var(--surface-raised);
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 500;
+    }
+
+    textarea { min-height: 138px; resize: vertical; line-height: 1.52; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .wide { grid-column: 1 / -1; }
+
+    .prompt-card, .prompt-box {
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      background: var(--surface-raised);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .prompt-card-header, .prompt-toolbar {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .prompt-card pre, .prompt-body {
+      margin: 0;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.93rem;
+      line-height: 1.58;
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    .checklist { display: grid; gap: 11px; }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 11px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+    }
+
+    .check-row input { width: 18px; height: 18px; min-height: auto; margin-top: 2px; accent-color: #111111; }
+    [data-theme="dark"] .check-row input { accent-color: #ffffff; }
+    .check-row span { color: var(--muted); }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--surface-soft); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    td { color: var(--muted); font-size: 0.94rem; }
+    tr:last-child td { border-bottom: 0; }
+
+    .nav-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .nav-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    .status-line { margin: 10px 0 0; min-height: 22px; color: var(--muted); font-size: 0.9rem; }
+
+    .svg-window, .svg-panel, .svg-card, .svg-doc, .svg-table, .svg-chip, .svg-soft, .svg-line, .svg-text, .svg-cursor { transition: fill 0.25s ease, stroke 0.25s ease, color 0.25s ease; }
+    .svg-window { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+    .svg-panel { fill: var(--surface-soft); stroke: var(--line); stroke-width: 1.3; }
+    .svg-card { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-doc { fill: var(--surface-raised); stroke: var(--line-strong); stroke-width: 1.4; }
+    .svg-table { fill: none; stroke: var(--line); stroke-width: 1.2; }
+    .svg-chip { fill: var(--line-strong); stroke: var(--line-strong); }
+    .svg-soft { fill: var(--line); opacity: 0.45; }
+    .svg-line { stroke: var(--line-strong); stroke-width: 1.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .svg-text { fill: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 11px; }
+    .svg-muted-text { fill: var(--muted); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 10px; }
+    .svg-cursor { fill: var(--text); stroke: var(--surface); stroke-width: 1.2; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+
+    @keyframes cursorReview { 0% { transform: translate(94px, 172px); } 42% { transform: translate(255px, 134px); } 52% { transform: translate(255px, 134px) scale(.86); } 100% { transform: translate(390px, 180px); } }
+    @keyframes pulseCell { 0%, 44% { opacity: 0; } 56%, 100% { opacity: .25; } }
+    @keyframes cursorAsk { 0% { transform: translate(170px, 200px); } 44% { transform: translate(430px, 200px); } 55% { transform: translate(430px, 200px) scale(.86); } 100% { transform: translate(455px, 210px); } }
+    @keyframes textAppear { 0%, 34% { opacity: 0; transform: translateY(4px); } 48%, 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes cursorVerify { 0% { transform: translate(95px, 150px); } 35% { transform: translate(164px, 101px); } 45% { transform: translate(164px, 101px) scale(0.86); } 100% { transform: translate(230px, 132px) scale(1); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 14px; }
+      .app-header, .stage { padding: 20px; }
+      .app-header, .data-grid, .data-grid.three, .form-grid { grid-template-columns: 1fr; }
+      .controls { justify-content: flex-start; }
+      .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tab { border-bottom: 1px solid var(--line); }
+      .illustration-container { min-height: 220px; }
+    }
+
+    @media (max-width: 560px) {
+      .brand-row, .stage-head, .notice { grid-template-columns: 1fr; display: grid; }
+      .tabs { grid-template-columns: 1fr; }
+      .tab { border-right: 0; }
+      .nav-row { flex-direction: column; }
+      .nav-actions { justify-content: flex-start; }
+      .task-card { grid-template-columns: auto minmax(0, 1fr); }
+      .selected-mark { display: none; }
+    }
+
+    @media print {
+      :root, [data-theme="dark"] {
+        --bg: #ffffff;
+        --surface: #ffffff;
+        --surface-soft: #ffffff;
+        --surface-raised: #ffffff;
+        --text: #000000;
+        --muted: #000000;
+        --faint: #000000;
+        --line: #8f8f8f;
+        --line-strong: #000000;
+        --shadow: none;
+      }
+      html, body { background: #ffffff !important; color: #000000 !important; padding: 0; }
+      .app { width: 100%; max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+      .app-header { border-bottom: 2px solid #000000; }
+      .controls, .tabs, .nav-row, .prompt-card-header .btn, .prompt-toolbar .btn, .status-line { display: none !important; }
+      .stage { padding: 18px 0; }
+      .step-panel, .step-panel.active { display: block !important; page-break-inside: avoid; break-inside: avoid; margin: 0 0 24px; padding: 0 18px 22px; border-bottom: 1px solid #8f8f8f; }
+      .data-grid, .data-grid.three, .form-grid { grid-template-columns: 1fr 1fr; }
+      .data-block, .notice, .prompt-card, .prompt-box, .check-row, .task-card, input, select, textarea { background: #ffffff !important; color: #000000 !important; box-shadow: none !important; }
+      .illustration-container { min-height: 180px; border-color: #8f8f8f; }
+      * { animation: none !important; }
+      .svg-cursor { display: none !important; }
+      a[href]::after { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M8 9h8"></path>
+            <path d="M8 13h5"></path>
+            <path d="M16 16l3 3"></path>
+          </svg>
+        </div>
+        <div class="header-copy">
+          <h1>Teaching Materials with HarveyAI</h1>
+          <p>Use this walkthrough to design draft teaching and assessment-support materials for educator review. The page keeps the work bounded, source-aware, and tied to verification before anything is used with students.</p>
+        </div>
+      </div>
+      <div class="controls" aria-label="Page controls">
+        <button class="btn secondary" type="button" id="themeToggle">
+          <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          Dark mode
+        </button>
+        <button class="btn ghost" type="button" id="printButton">
+          <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+          Print to PDF
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Teaching materials workflow steps">
+      <button class="tab" type="button" data-step="0" aria-selected="true"><span class="tab-number">1</span><span class="tab-label">Orient</span></button>
+      <button class="tab" type="button" data-step="1" aria-selected="false"><span class="tab-number">2</span><span class="tab-label">Plan</span></button>
+      <button class="tab" type="button" data-step="2" aria-selected="false"><span class="tab-number">3</span><span class="tab-label">Prepare</span></button>
+      <button class="tab" type="button" data-step="3" aria-selected="false"><span class="tab-number">4</span><span class="tab-label">Verify</span></button>
+      <button class="tab" type="button" data-step="4" aria-selected="false"><span class="tab-number">5</span><span class="tab-label">Revise</span></button>
+      <button class="tab" type="button" data-step="5" aria-selected="false"><span class="tab-number">6</span><span class="tab-label">Templates</span></button>
+    </nav>
+
+    <main class="stage" id="stage">
+      <section class="step-panel active" data-panel="0">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg></div>
+          <div>
+            <h2>Start with the teaching problem, not the tool.</h2>
+            <p>Harvey can be used to produce draft teaching or assessment-support materials for educator review. The output is not ready for direct release until it has been checked for legal accuracy, pedagogical fit, source grounding, and student risk.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-0" aria-hidden="true"></div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>Purpose</h3>
+            <p>Support teaching preparation, seminar design, revision activities, case explanation, or assessment-support drafting without treating unverified output as authority.</p>
+          </article>
+          <article class="data-block">
+            <h3>Safe pattern</h3>
+            <p>Define purpose, provide context and source limits, generate a structured draft, verify, revise, and document the educator’s decisions.</p>
+          </article>
+          <article class="data-block">
+            <h3>Boundary</h3>
+            <p>Do not use Harvey to bypass legal judgement, educator review, source checking, copyright obligations, or privacy requirements.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18"></path><path d="M5 8h14"></path><path d="M7 8l-3 6h6L7 8z"></path><path d="M17 8l-3 6h6l-3-6z"></path></svg></div>
+          <div>
+            <strong>Working principle</strong>
+            <p>Use Harvey to draft and organise material for review. The educator determines what is accurate, appropriate for the cohort, and suitable for the intended learning activity.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <span></span>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to planning</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="1">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6h11"></path><path d="M9 12h11"></path><path d="M9 18h11"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg></div>
+          <div>
+            <h2>Select a bounded teaching-material task.</h2>
+            <p>Choose one task that can be reviewed against known sources and a clear teaching purpose. The page will generate a draft prompt that you can edit before testing in Harvey.</p>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Planning sequence</h3>
+            <ol>
+              <li>Decide what the material is meant to support.</li>
+              <li>Select the smallest useful teaching output.</li>
+              <li>Name the unit, cohort, jurisdiction, topic, class format, and level of detail.</li>
+            </ol>
+          </article>
+          <article class="data-block">
+            <h3>What to avoid</h3>
+            <p>Avoid broad requests such as “make teaching materials”. Ask for a defined output: an IRAC summary, seminar sequence, issue-heading scaffold, short explainer, teaching note, or revision activity.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M6 17V7l6-3 6 3v10"></path><path d="M9 10h6"></path><path d="M9 14h6"></path></svg></div>
+          <div>
+            <strong>Selection rule</strong>
+            <p>Select the task that is easiest to verify and most clearly connected to student learning. A narrower prompt usually gives the educator more control.</p>
+          </div>
+        </div>
+
+        <div class="task-list" id="taskList" aria-label="Teaching-material task options"></div>
+
+        <div class="form-grid" style="margin-top:18px;" aria-label="Teaching context fields">
+          <label>Unit or teaching setting<input id="unitName" type="text" placeholder="e.g. Contracts, Administrative Law, Legal Research"></label>
+          <label>Student cohort<select id="studentLevel"><option value="">Select one</option><option>First-year LLB students</option><option>Later-year LLB students</option><option>JD students</option><option>LLM students</option><option>Mixed postgraduate cohort</option></select></label>
+          <label>Jurisdiction or legal frame<input id="jurisdiction" type="text" value="Australia" placeholder="e.g. Australia, NSW, Commonwealth"></label>
+          <label>Topic or area of law<input id="topic" type="text" placeholder="e.g. consideration, judicial review, statutory interpretation"></label>
+          <label class="wide">Immediate teaching purpose<textarea id="purpose" placeholder="Describe what the material should help students or educators do. For example: prepare for a seminar, compare reasoning, practise issue spotting, or revise before assessment."></textarea></label>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to preparation</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="2">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h5"></path></svg></div>
+          <div>
+            <h2>Prepare the source material and set the limits.</h2>
+            <p>Harvey output is easier to review when it is tied to supplied material. Use a bounded corpus and state what the output must not do.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-2" aria-hidden="true"></div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Source materials</h3>
+            <ul>
+              <li>Case, extract, or judgment.</li>
+              <li>Statute provision or problem scenario.</li>
+              <li>Existing lecture notes or reading list.</li>
+              <li>Relevant Vault corpus, where appropriate.</li>
+            </ul>
+          </article>
+          <article class="data-block">
+            <h3>Limits to state</h3>
+            <ul>
+              <li>Do not invent authorities.</li>
+              <li>Do not provide legal advice.</li>
+              <li>Do not exceed the jurisdiction.</li>
+              <li>Do not produce a complete model answer unless explicitly required.</li>
+              <li>Flag uncertainty and verification points.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg></div>
+          <div>
+            <strong>Upload boundary</strong>
+            <p>Before uploading or pasting source materials, check that the material does not conflict with copyright obligations and does not contain personally identifiable information. If working from Vault, use only the relevant corpus.</p>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <div class="prompt-toolbar"><strong>Draft prompt for preparation</strong><button class="btn secondary" type="button" id="regeneratePrompt">Regenerate from context</button></div>
+          <textarea id="promptEditor" class="prompt-body" style="width:100%; min-height:260px; border:0; border-radius:0; resize:vertical;" aria-label="Editable draft prompt"></textarea>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to verification</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="3">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+          <div>
+            <h2>Generate a structured draft, then verify it.</h2>
+            <p>Ask for a defined output format, then check the result before it becomes a teaching artefact. Verification is the point at which educator judgement remains visible.</p>
+          </div>
+        </div>
+
+        <div class="illustration-container" id="illustration-3" aria-hidden="true"></div>
+
+        <div class="data-grid three">
+          <article class="data-block">
+            <h3>Structured output</h3>
+            <p>Ask for headings, a table, sequence of questions, short teaching note, IRAC structure, issue map, discussion plan, or annotated outline.</p>
+          </article>
+          <article class="data-block">
+            <h3>Legal accuracy</h3>
+            <p>Verify citations, propositions, quotations, doctrinal characterisations, and jurisdictional claims against primary sources or approved legal databases.</p>
+          </article>
+          <article class="data-block">
+            <h3>Pedagogical suitability</h3>
+            <p>Check whether the draft supports the intended learning outcome, matches the cohort level, and avoids giving students a complete answer where that would undermine learning.</p>
+          </article>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M6 17V7l6-3 6 3v10"></path><path d="M9 10h6"></path><path d="M9 14h6"></path></svg></div>
+          <div>
+            <strong>Verification focus</strong>
+            <p>Record at least one verified strength, one correction, and one unresolved issue. These notes make the activity useful for teaching rather than merely plausible.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to revision</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="4">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h18v16H3z"></path><path d="M7 8h10"></path><path d="M7 12h6"></path><path d="M7 16h8"></path></svg></div>
+          <div>
+            <h2>Revise the draft into a teaching activity and document the process.</h2>
+            <p>Edit the output before use. Where possible, convert the material into an activity that requires students to do legal reasoning, not simply consume an answer.</p>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <article class="data-block">
+            <h3>Revise for student use</h3>
+            <p>Edit tone, remove unnecessary complexity, add prompts for active learning, and make the legal reasoning task visible. A handout may be less useful than an activity.</p>
+          </article>
+          <article class="data-block">
+            <h3>Document verification</h3>
+            <p>Keep a short note recording what Harvey was used for, what sources were checked, what changed, and what remains educator-authored.</p>
+          </article>
+        </div>
+
+        <div class="checklist" style="margin-top:18px;" aria-label="Quality checklist">
+          <label class="check-row"><input type="checkbox"><span><strong>Legal accuracy.</strong> Authorities, quotations, propositions, and jurisdictional claims have been checked.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Jurisdictional fit.</strong> The material is framed for the correct legal system.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Cohort fit.</strong> The level is appropriate for the intended students.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Teaching purpose.</strong> The material supports a defined class activity or learning task.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Cognitive demand.</strong> The task prompts analysis rather than passive consumption.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Source grounding.</strong> Claims can be traced to the supplied materials.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Student risk.</strong> The material avoids becoming a complete substitute answer unless explicitly intended.</span></label>
+          <label class="check-row"><input type="checkbox"><span><strong>Educator review.</strong> The final version has been edited and approved before release.</span></label>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn" type="button" data-next>Continue to templates</button></div>
+        </div>
+      </section>
+
+      <section class="step-panel" data-panel="5">
+        <div class="stage-head">
+          <div class="signpost" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M15 17l4 4"></path></svg></div>
+          <div>
+            <h2>Copy a prompt template and adapt it before testing.</h2>
+            <p>These templates are starting points. Before copying to Harvey, name the unit, cohort, jurisdiction, topic, source materials, and intended teaching use.</p>
+          </div>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header"><strong>Final prompt from selected task</strong><button class="btn secondary" type="button" id="copyPrompt">Copy final prompt</button></div>
+          <pre id="finalPrompt" class="prompt-body"></pre>
+        </div>
+        <p class="status-line" id="copyStatus" aria-live="polite"></p>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header"><strong>IRAC-style case summary for teaching</strong><button class="btn secondary" type="button" data-copy="irac">Copy template</button></div>
+          <pre>Using only the supplied case materials, draft a concise IRAC-style teaching summary for [UNIT] students studying [TOPIC] in [JURISDICTION].
+
+Audience: [FIRST-YEAR LLB / LATER-YEAR LLB / JD / LLM].
+Purpose: support class preparation and discussion, not replace student reading.
+
+Provide:
+1. Material facts
+2. Procedural posture
+3. Legal issue
+4. Rule or governing principle
+5. Application / reasoning
+6. Holding
+7. One teaching point
+8. Two questions for class discussion
+9. Matters requiring verification
+
+Do not invent authorities. Do not add propositions not supported by the source materials. Flag uncertainty.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header"><strong>Seminar discussion questions</strong><button class="btn secondary" type="button" data-copy="seminar">Copy template</button></div>
+          <pre>Draft a sequenced set of seminar discussion questions for [UNIT] on [TOPIC].
+
+Audience: [STUDENT COHORT].
+Jurisdiction: [JURISDICTION].
+Source materials: use only [SPECIFY MATERIALS].
+
+Provide:
+1. One opening recall question
+2. Two application questions
+3. One comparison or evaluation question
+4. One likely misconception
+5. One closing consolidation activity
+
+Do not provide model answers. Identify which source or legal concept each question is designed to activate.</pre>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card-header"><strong>Updating lecture notes with recent case law</strong><button class="btn secondary" type="button" data-copy="lecture">Copy template</button></div>
+          <pre>Compare the supplied lecture notes with the supplied recent case materials.
+
+Task:
+1. Identify where the lecture notes may need updating.
+2. Suggest revised wording using tracked-change style markers: [DELETE: ...] and [ADD: ...].
+3. Provide the source case and paragraph reference for each proposed change.
+4. Flag any suggested change that requires educator verification.
+
+Do not change the pedagogical structure unless necessary. Do not invent authorities or assume developments beyond the supplied materials.</pre>
+        </div>
+
+        <div class="notice">
+          <div class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path><path d="M3 21h18"></path></svg></div>
+          <div>
+            <strong>Completion point</strong>
+            <p>The workflow is complete when the educator can explain the teaching purpose, the source boundary, the verification process, and how the final material preserves student legal reasoning.</p>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn secondary" type="button" data-prev>Back</button>
+          <div class="nav-actions"><button class="btn ghost" type="button" id="restartButton">Restart</button><button class="btn ghost" type="button" id="printButtonBottom">Print to PDF</button></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="nav-row" style="margin:0; padding:18px 28px; background:var(--surface-soft);">
+      <button class="btn secondary" type="button" id="prevButton"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>Previous</button>
+      <div class="nav-actions">
+        <button class="btn secondary" type="button" id="playButton"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg>Play</button>
+        <button class="btn" type="button" id="nextButton">Next<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"></path></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var currentStep = 0;
+      var totalSteps = 6;
+      var selectedTaskId = "irac";
+      var autoplay = null;
+
+      var templates = {
+        irac: "Using only the supplied case materials, draft a concise IRAC-style teaching summary for [UNIT] students studying [TOPIC] in [JURISDICTION].\n\nAudience: [FIRST-YEAR LLB / LATER-YEAR LLB / JD / LLM].\nPurpose: support class preparation and discussion, not replace student reading.\n\nProvide:\n1. Material facts\n2. Procedural posture\n3. Legal issue\n4. Rule or governing principle\n5. Application / reasoning\n6. Holding\n7. One teaching point\n8. Two questions for class discussion\n9. Matters requiring verification\n\nDo not invent authorities. Do not add propositions not supported by the source materials. Flag uncertainty.",
+        seminar: "Draft a sequenced set of seminar discussion questions for [UNIT] on [TOPIC].\n\nAudience: [STUDENT COHORT].\nJurisdiction: [JURISDICTION].\nSource materials: use only [SPECIFY MATERIALS].\n\nProvide:\n1. One opening recall question\n2. Two application questions\n3. One comparison or evaluation question\n4. One likely misconception\n5. One closing consolidation activity\n\nDo not provide model answers. Identify which source or legal concept each question is designed to activate.",
+        lecture: "Compare the supplied lecture notes with the supplied recent case materials.\n\nTask:\n1. Identify where the lecture notes may need updating.\n2. Suggest revised wording using tracked-change style markers: [DELETE: ...] and [ADD: ...].\n3. Provide the source case and paragraph reference for each proposed change.\n4. Flag any suggested change that requires educator verification.\n\nDo not change the pedagogical structure unless necessary. Do not invent authorities or assume developments beyond the supplied materials.",
+        issue: "Using only the supplied problem scenario and source materials, create an issue-heading scaffold for [UNIT] students studying [TOPIC] in [JURISDICTION].\n\nAudience: [STUDENT COHORT].\nPurpose: support problem-question planning without providing a complete answer.\n\nProvide:\n1. Threshold issues\n2. Main legal issues\n3. Factual triggers for each issue\n4. Authorities or source materials students should check\n5. Matters requiring verification\n\nDo not state final conclusions. Do not invent authorities. Flag uncertainty.",
+        revision: "Create a revision activity for [UNIT] students studying [TOPIC] in [JURISDICTION].\n\nAudience: [STUDENT COHORT].\nSource materials: use only [SPECIFY MATERIALS].\n\nProvide:\n1. A short activity title\n2. Learning purpose\n3. Student instructions\n4. Three prompts that require application or comparison\n5. One reflection question\n6. A source-checking reminder\n\nDo not provide a full model answer. Keep the activity suitable for educator review before release."
+      };
+
+      var tasks = [
+        { id: "irac", code: "A", title: "IRAC-style case summary", description: "Use when you want a concise teaching summary that separates facts, issue, rule, reasoning, holding, and discussion points." },
+        { id: "seminar", code: "B", title: "Seminar discussion sequence", description: "Use when you want questions moving from recall to application and evaluation without providing model answers." },
+        { id: "lecture", code: "C", title: "Lecture-note update check", description: "Use when comparing existing notes with recent supplied case materials and proposing verified amendments." },
+        { id: "issue", code: "D", title: "Issue-heading scaffold", description: "Use when students need structure for problem-question planning but should still complete the legal analysis themselves." },
+        { id: "revision", code: "E", title: "Revision activity", description: "Use when converting source material into an active learning task rather than a static handout." }
+      ];
+
+      var fields = {
+        unitName: document.getElementById("unitName"),
+        studentLevel: document.getElementById("studentLevel"),
+        jurisdiction: document.getElementById("jurisdiction"),
+        topic: document.getElementById("topic"),
+        purpose: document.getElementById("purpose"),
+        promptEditor: document.getElementById("promptEditor")
+      };
+
+      var tabs = document.querySelectorAll(".tab");
+      var panels = document.querySelectorAll(".step-panel");
+      var taskList = document.getElementById("taskList");
+      var themeToggle = document.getElementById("themeToggle");
+      var finalPrompt = document.getElementById("finalPrompt");
+      var copyStatus = document.getElementById("copyStatus");
+      var playButton = document.getElementById("playButton");
+      var cursor = '<path class="svg-cursor" d="M0,0 L15,15 L7,15 L0,23 Z"></path>';
+      var chrome = '<rect class="svg-window" x="20" y="18" width="520" height="250" rx="10"></rect><path class="svg-panel" d="M20 28 Q20 18 30 18 H530 Q540 18 540 28 V54 H20 Z"></path><circle cx="39" cy="36" r="4" class="svg-soft"></circle><circle cx="55" cy="36" r="4" class="svg-soft"></circle><circle cx="71" cy="36" r="4" class="svg-soft"></circle><text class="svg-muted-text" x="226" y="40">Harvey teaching workflow</text>';
+      var svgs = [
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-panel" x="50" y="82" width="190" height="144" rx="10"></rect><text class="svg-text" x="76" y="112">Teaching problem</text><line class="svg-line" x1="76" y1="138" x2="190" y2="138"></line><line class="svg-line" x1="76" y1="163" x2="210" y2="163"></line><line class="svg-line" x1="76" y1="188" x2="165" y2="188"></line><path class="svg-line" d="M250 154h55"></path><path class="svg-line" d="M292 142l13 12-13 12"></path><rect class="svg-card" x="318" y="82" width="190" height="144" rx="10"></rect><text class="svg-text" x="346" y="112">Verified draft</text><rect class="svg-chip" x="346" y="136" width="84" height="9" rx="4" opacity="0.2"></rect><rect class="svg-chip" x="346" y="160" width="126" height="9" rx="4" opacity="0.2"></rect><rect class="svg-chip" x="346" y="184" width="100" height="9" rx="4" opacity="0.2"></rect><g style="animation:cursorReview 4.5s infinite ease-in-out">' + cursor + '</g></svg>',
+        '',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-panel" x="38" y="76" width="170" height="170" rx="10"></rect><text class="svg-text" x="66" y="106">Source materials</text><rect class="svg-doc" x="70" y="128" width="44" height="58" rx="4"></rect><rect class="svg-doc" x="128" y="128" width="44" height="58" rx="4"></rect><path class="svg-line" d="M80 146h23M80 158h18M138 146h23M138 158h18"></path><path class="svg-line" d="M220 160h70"></path><path class="svg-line" d="M278 148l12 12-12 12"></path><rect class="svg-card" x="312" y="76" width="206" height="170" rx="10"></rect><text class="svg-text" x="340" y="106">Prompt limits</text><line class="svg-line" x1="340" y1="134" x2="454" y2="134"></line><line class="svg-line" x1="340" y1="162" x2="478" y2="162"></line><line class="svg-line" x1="340" y1="190" x2="430" y2="190"></line><g style="animation:cursorReview 4.5s infinite ease-in-out">' + cursor + '</g></svg>',
+        '<svg viewBox="0 0 560 290">' + chrome + '<rect class="svg-card" x="45" y="74" width="210" height="172" rx="10"></rect><text class="svg-text" x="72" y="104">Structured draft</text><g style="animation:textAppear 4s infinite"><rect class="svg-chip" x="72" y="128" width="132" height="8" rx="4" opacity=".2"></rect><rect class="svg-chip" x="72" y="154" width="154" height="8" rx="4" opacity=".2"></rect><rect class="svg-chip" x="72" y="180" width="116" height="8" rx="4" opacity=".2"></rect></g><rect class="svg-panel" x="298" y="74" width="206" height="172" rx="10"></rect><text class="svg-text" x="326" y="104">Verify</text><rect class="svg-card" x="326" y="126" width="144" height="36" rx="5"></rect><text class="svg-muted-text" x="338" y="149">Source reference</text><path class="svg-line" d="M334 196l18 18 56-62"></path><g style="animation:cursorVerify 4s infinite ease-in-out">' + cursor + '</g></svg>',
+        '',
+        ''
+      ];
+
+      function clean(value, fallback) { var text = String(value || "").trim(); return text.length ? text : fallback; }
+
+      function context() {
+        return {
+          unit: clean(fields.unitName.value, "[UNIT]"),
+          cohort: clean(fields.studentLevel.value, "[STUDENT COHORT]"),
+          jurisdiction: clean(fields.jurisdiction.value, "[JURISDICTION]"),
+          topic: clean(fields.topic.value, "[TOPIC]"),
+          purpose: clean(fields.purpose.value, "[TEACHING PURPOSE]")
+        };
+      }
+
+      function taskTemplate() { return templates[selectedTaskId] || templates.irac; }
+
+      function suggestedPrompt() {
+        var ctx = context();
+        var prompt = taskTemplate()
+          .replace(/\[UNIT\]/g, ctx.unit)
+          .replace(/\[TOPIC\]/g, ctx.topic)
+          .replace(/\[JURISDICTION\]/g, ctx.jurisdiction)
+          .replace(/\[STUDENT COHORT\]/g, ctx.cohort)
+          .replace(/\[FIRST-YEAR LLB \/ LATER-YEAR LLB \/ JD \/ LLM\]/g, ctx.cohort);
+        return prompt + "\n\nImmediate teaching purpose: " + ctx.purpose + "\n\nBefore finalising the output, state assumptions, identify verification points, and note any aspect that requires educator review before student use.";
+      }
+
+      function renderTasks() {
+        taskList.innerHTML = "";
+        tasks.forEach(function (task) {
+          var button = document.createElement("button");
+          button.type = "button";
+          button.className = "task-card";
+          button.setAttribute("aria-pressed", task.id === selectedTaskId ? "true" : "false");
+          button.innerHTML = '<span class="task-tag">' + task.code + '</span><span><h3>' + task.title + '</h3><p>' + task.description + '</p></span><span class="selected-mark" aria-hidden="true">' + (task.id === selectedTaskId ? "✓" : "") + '</span>';
+          button.addEventListener("click", function () { selectedTaskId = task.id; fields.promptEditor.value = suggestedPrompt(); render(); });
+          taskList.appendChild(button);
+        });
+      }
+
+      function renderIllustrations() {
+        for (var i = 0; i < totalSteps; i += 1) {
+          var container = document.getElementById("illustration-" + i);
+          if (container && svgs[i] && (!container.innerHTML || i === currentStep)) { container.innerHTML = svgs[i]; }
+        }
+      }
+
+      function render() {
+        tabs.forEach(function (tab) {
+          var selected = Number(tab.getAttribute("data-step")) === currentStep;
+          tab.setAttribute("aria-selected", selected ? "true" : "false");
+        });
+        panels.forEach(function (panel) { panel.classList.toggle("active", Number(panel.getAttribute("data-panel")) === currentStep); });
+        renderTasks();
+        finalPrompt.textContent = fields.promptEditor.value || suggestedPrompt();
+        renderIllustrations();
+      }
+
+      function goToStep(step) { currentStep = Math.max(0, Math.min(totalSteps - 1, step)); render(); }
+
+      function stopAutoplay() {
+        if (autoplay) {
+          clearInterval(autoplay);
+          autoplay = null;
+          playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg>Play';
+        }
+      }
+
+      function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) { return navigator.clipboard.writeText(text); }
+        var temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+        return Promise.resolve();
+      }
+
+      tabs.forEach(function (tab) { tab.addEventListener("click", function () { stopAutoplay(); goToStep(Number(tab.getAttribute("data-step"))); }); });
+      document.querySelectorAll("[data-next]").forEach(function (button) { button.addEventListener("click", function () { stopAutoplay(); goToStep(currentStep + 1); }); });
+      document.querySelectorAll("[data-prev]").forEach(function (button) { button.addEventListener("click", function () { stopAutoplay(); goToStep(currentStep - 1); }); });
+
+      document.getElementById("nextButton").addEventListener("click", function () { stopAutoplay(); goToStep(currentStep + 1 >= totalSteps ? 0 : currentStep + 1); });
+      document.getElementById("prevButton").addEventListener("click", function () { stopAutoplay(); goToStep(currentStep - 1 < 0 ? totalSteps - 1 : currentStep - 1); });
+      document.getElementById("restartButton").addEventListener("click", function () { stopAutoplay(); goToStep(0); });
+
+      themeToggle.addEventListener("click", function () {
+        var html = document.documentElement;
+        var nextTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", nextTheme);
+        themeToggle.innerHTML = nextTheme === "dark" ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>Light mode' : '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>Dark mode';
+        renderIllustrations();
+      });
+
+      document.getElementById("regeneratePrompt").addEventListener("click", function () { fields.promptEditor.value = suggestedPrompt(); render(); });
+      Object.keys(fields).forEach(function (key) { fields[key].addEventListener("input", function () { if (key !== "promptEditor") { fields.promptEditor.value = suggestedPrompt(); } render(); }); });
+
+      document.getElementById("copyPrompt").addEventListener("click", function () {
+        copyText(finalPrompt.textContent).then(function () { copyStatus.textContent = "Prompt copied. Paste it into Harvey, test it, then record what worked, what failed, and what requires verification."; }).catch(function () { copyStatus.textContent = "Copy failed. Select the prompt manually and copy it."; });
+      });
+
+      document.querySelectorAll("[data-copy]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          var key = button.getAttribute("data-copy");
+          copyText(templates[key] || "").then(function () { copyStatus.textContent = "Template copied. Localise it before testing in Harvey."; }).catch(function () { copyStatus.textContent = "Copy failed. Select the template manually and copy it."; });
+        });
+      });
+
+      playButton.addEventListener("click", function () {
+        if (autoplay) { stopAutoplay(); }
+        else {
+          autoplay = setInterval(function () { currentStep = (currentStep + 1) % totalSteps; render(); }, 4500);
+          playButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6z"></path><path d="M14 4h4v16h-4z"></path></svg>Pause';
+        }
+      });
+
+      function printPage() { stopAutoplay(); renderIllustrations(); window.print(); }
+      document.getElementById("printButton").addEventListener("click", printPage);
+      document.getElementById("printButtonBottom").addEventListener("click", printPage);
+
+      fields.promptEditor.value = suggestedPrompt();
+      render();
+    }());
+  </script>
+</body>
+</html>
