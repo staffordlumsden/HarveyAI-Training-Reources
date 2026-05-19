@@ -512,10 +512,10 @@
           <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           Dark mode
         </button>
-        <button class="btn ghost" type="button" id="printButton">
-          <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
-          Print to PDF
-        </button>
+        <a class="btn ghost" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path></svg>
+          Home
+        </a>
       </div>
     </header>
 
@@ -1009,7 +1009,6 @@ Do not change the pedagogical structure unless necessary. Do not invent authorit
       });
 
       function printPage() { stopAutoplay(); renderIllustrations(); window.print(); }
-      document.getElementById("printButton").addEventListener("click", printPage);
       document.getElementById("printButtonBottom").addEventListener("click", printPage);
 
       fields.promptEditor.value = suggestedPrompt();

@@ -730,14 +730,6 @@
       </div>
 
       <div class="controls" aria-label="Page controls">
-        <a class="home-link" href="index.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 11l9-8 9 8"></path>
-            <path d="M5 10v10h14V10"></path>
-            <path d="M9 20v-6h6v6"></path>
-          </svg>
-          Home
-        </a>
         <a class="btn ghost" href="resources/5_Vault_Set_Up.pdf">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -748,7 +740,14 @@
           Source PDF
         </a>
         <button class="btn secondary" type="button" id="themeToggle">Dark mode</button>
-        <button class="btn ghost" type="button" id="printButton">Print to PDF</button>
+        <a class="btn ghost" href="index.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11l9-8 9 8"></path>
+            <path d="M5 10v10h14V10"></path>
+            <path d="M9 20v-6h6v6"></path>
+          </svg>
+          Home
+        </a>
       </div>
     </header>
 
@@ -1238,7 +1237,6 @@
       var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
       var panels = Array.prototype.slice.call(document.querySelectorAll(".step-panel"));
       var themeToggle = document.getElementById("themeToggle");
-      var printButton = document.getElementById("printButton");
       var statusLines = Array.prototype.slice.call(document.querySelectorAll(".status-line"));
 
       function goToStep(step) {
@@ -1318,10 +1316,6 @@
         var nextTheme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
         html.setAttribute("data-theme", nextTheme);
         themeToggle.textContent = nextTheme === "dark" ? "Light mode" : "Dark mode";
-      });
-
-      printButton.addEventListener("click", function () {
-        window.print();
       });
 
       render();
