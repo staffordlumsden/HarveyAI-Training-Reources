@@ -1,0 +1,38 @@
+name: Apply studio toolbar fix
+
+on:
+  push:
+    branches:
+      - toolbar-controls-fix-aug-2026
+    paths:
+      - .github/workflows/apply-toolbar-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-toolbars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out correction branch
+        uses: actions/checkout@v4
+        with:
+          ref: toolbar-controls-fix-aug-2026
+          fetch-depth: 0
+
+      - name: Apply toolbar corrections
+        run: python scripts/fix_studio_toolbars.py
+
+      - name: Commit corrected pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "1 Harvey_Prompt_Library_Management_Studio.html" \
+                  "2 Harvey_Build_Workflow_Automation_Studio.html" \
+                  "Harvey_Teaching Materials_Walkthrough.html"
+          if git diff --cached --quiet; then
+            echo "No page changes required."
+          else
+            git commit -m "Fix studio header controls"
+            git push origin HEAD:toolbar-controls-fix-aug-2026
+          fi
