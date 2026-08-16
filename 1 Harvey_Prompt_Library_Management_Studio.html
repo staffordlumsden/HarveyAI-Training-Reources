@@ -722,7 +722,23 @@
       details { break-inside: avoid; }
       .footer { padding: 6mm 12mm; }
     }
-  </style>
+  
+/* studio-toolbar-consistency-fix */
+.topbar { align-items: start !important; }
+.toolbar {
+  align-self: start !important;
+  align-items: center !important;
+  align-content: flex-start !important;
+}
+.topbar .toolbar .btn {
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  align-self: flex-start !important;
+  white-space: nowrap;
+}
+
+</style>
 </head>
 <body>
   <div class="app" id="app">
@@ -734,19 +750,23 @@
         <div class="independent-note"><span class="dot" aria-hidden="true"></span>Independent educational resource · not an official Harvey interface</div>
       </div>
       <div class="toolbar" aria-label="Page controls">
-        <a class="btn ghost" href="index.html">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
-          Home
-        </a>
-        <button class="btn secondary" type="button" id="themeToggle">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.2 8.2 0 0 1 8.7 4a8.3 8.3 0 1 0 11.3 11.3z"></path></svg>
-          Dark mode
-        </button>
-        <button class="btn" type="button" id="printButton">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
-          Print / PDF
-        </button>
-      </div>
+  <a class="btn ghost" href="resources/1_Prompt_Library.pdf">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+    Source PDF
+  </a>
+  <button class="btn secondary" type="button" id="themeToggle">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.2 8.2 0 0 1 8.7 4a8.3 8.3 0 1 0 11.3 11.3z"></path></svg>
+    Dark mode
+  </button>
+  <button class="btn ghost" type="button" id="printButton">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
+    Print / PDF
+  </button>
+  <a class="btn ghost" href="index.html">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
+    Home
+  </a>
+</div>
     </header>
 
     <div class="product-map" aria-label="Harvey product distinction">

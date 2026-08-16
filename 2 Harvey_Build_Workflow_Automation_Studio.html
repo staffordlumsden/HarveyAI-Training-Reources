@@ -41,7 +41,23 @@
     @media(max-width:680px){.field-grid,.grid-2,.candidate-grid{grid-template-columns:1fr}.wide{grid-column:auto}.section-head{grid-template-columns:40px minmax(0,1fr)}.section-icon{width:40px;height:40px}.content{padding:22px 17px}.navrow{flex-direction:column}.nav-actions{justify-content:flex-start}.term-table,.permission-table{font-size:.86rem}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
     @media print{:root,[data-theme="dark"]{--page:#fff;--paper:#fff;--paper-strong:#fff;--paper-soft:#f7f3ef;--ink:#000;--muted:#333;--line:#bbb;--line-strong:#888;--accent:#6d5746;--accent-strong:#4d3c30;--accent-soft:#eee6de;--shadow:none}body{background:#fff!important;padding:0}.app{width:100%;border:0;border-radius:0;box-shadow:none}.toolbar,.rail,.navrow,.status{display:none!important}.workspace{display:block}.content{padding:16px}.panel,.panel.active{display:block!important;page-break-inside:avoid;margin-bottom:26px}.product-map{grid-template-columns:1fr auto 1fr auto 1fr}.footer{background:#fff}}
-  </style>
+  
+/* studio-toolbar-consistency-fix */
+.topbar { align-items: start !important; }
+.toolbar {
+  align-self: start !important;
+  align-items: center !important;
+  align-content: flex-start !important;
+}
+.topbar .toolbar .btn {
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  align-self: flex-start !important;
+  white-space: nowrap;
+}
+
+</style>
 </head>
 <body>
 <div class="app">
@@ -53,11 +69,23 @@
       <div class="independent-note"><span class="dot" aria-hidden="true"></span>Independent educational resource · not an official Harvey interface</div>
     </div>
     <div class="toolbar" aria-label="Page controls">
-      <a class="btn ghost" href="resources/2_Workflows_Build.pdf"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>Source PDF</a>
-      <button class="btn secondary" type="button" id="themeToggle"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>Dark mode</button>
-      <button class="btn ghost" type="button" id="printButton"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>Print / PDF</button>
-      <a class="btn ghost" href="index.html"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>Home</a>
-    </div>
+  <a class="btn ghost" href="resources/2_Workflows_Build.pdf">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+    Source PDF
+  </a>
+  <button class="btn secondary" type="button" id="themeToggle">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.2 8.2 0 0 1 8.7 4a8.3 8.3 0 1 0 11.3 11.3z"></path></svg>
+    Dark mode
+  </button>
+  <button class="btn ghost" type="button" id="printButton">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v7H6z"></path></svg>
+    Print / PDF
+  </button>
+  <a class="btn ghost" href="index.html">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
+    Home
+  </a>
+</div>
   </header>
 
   <section class="product-map" aria-label="Harvey workflow terminology">
